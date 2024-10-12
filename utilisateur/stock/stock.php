@@ -71,16 +71,39 @@
           </tr>
         </thead>
         <tbody>
-          <style>
-           
-          </style>
-          <!-- Dynamically generated rows will be inserted here -->
+          <?php
+          // Inclure la connexion à la base de données
+          include('../../dbconnexion.php');
+
+          // Requête pour récupérer les produits en stock
+          $sql = "SELECT * FROM produits WHERE quantite > 0";
+          $result = $conn->query($sql);
+
+          // Vérifier s'il y a des produits
+          if ($result->num_rows > 0) {
+              // Boucle pour afficher chaque produit
+              while($row = $result->fetch_assoc()) {
+                  echo "<tr>";
+                  echo "<td>" . $row['date_entree'] . "</td>";
+                  echo "<td>" . $row['nom_produit'] . "</td>";
+                  echo "<td>" . $row['quantite'] . "</td>";
+                  echo "<td>" . $row['emplacement_stock'] . "</td>";
+                  echo "</tr>";
+              }
+          } else {
+              echo "<tr><td colspan='4'>Aucun produit en stock</td></tr>";
+          }
+
+          // Fermer la connexion
+          $conn->close();
+          ?>
         </tbody>
       </table>
       <form action="remove_product.php" method="post">
         <h2>Retirer un Produit du Stock</h2>
         <label for="product_name">Nom du produit:</label>
-        <input type="text" id="product_name" name="product_name" required><br>
+        <input type="text" id="product_name" name="product_name" required autocomplete="off"><br>
+        <div id="product_suggestions"></div>
         <label for="quantity">Quantité à retirer:</label>
         <input type="number" id="quantity" name="quantity" required><br>
         <label for="stock_location">Emplacement du stock:</label>
@@ -132,6 +155,50 @@
         </tbody>
     </table>
 
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+$(document).ready(function() {
+    $('#product_name').keyup(function() {
+        var query = $(this).val();
+        if (query != '') {
+            $.ajax({
+                url: "get_products.php",
+                method: "POST",
+                data: {query:query},
+                success: function(data) {
+                    $('#product_suggestions').fadeIn();
+                    $('#product_suggestions').html(data);
+                }
+            });
+        } else {
+            $('#product_suggestions').fadeOut();
+        }
+    });
+
+    $(document).on('click', '.suggestion', function() {
+        $('#product_name').val($(this).text());
+        $('#product_suggestions').fadeOut();
+    });
+});
+</script>
+
+<style>
+#product_suggestions {
+    position: absolute;
+    background-color: #f9f9f9;
+    max-height: 200px;
+    overflow-y: auto;
+    border: 1px solid #ddd;
+    display: none;
+}
+.suggestion {
+    padding: 10px;
+    cursor: pointer;
+}
+.suggestion:hover {
+    background-color: #f1f1f1;
+}
+</style>
 
 <footer>
   <div class="footer-content">

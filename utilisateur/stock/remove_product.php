@@ -25,6 +25,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
             if ($conn->query($update_sql) === TRUE) {
                 echo "Le produit a été retiré avec succès.";
+                header('Location: stock.php');
             } else {
                 echo "Erreur lors de la mise à jour : " . $conn->error;
             }

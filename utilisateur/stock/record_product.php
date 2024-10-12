@@ -14,6 +14,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     if ($conn->query($sql) === TRUE) {
         echo "Produit enregistré avec succès.";
+        header('Location: stock.php');
     } else {
         echo "Erreur lors de l'enregistrement : " . $conn->error;
     }
