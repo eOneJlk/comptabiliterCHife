@@ -77,16 +77,19 @@
           <!-- Dynamically generated rows will be inserted here -->
         </tbody>
       </table>
-<form action="remove_product.php" method="post">
-    <h2>Retirer un Produit du Stock</h2>
-    <label for="product_name">Nom du produit:</label>
-    <input type="text" id="product_name" name="product_name" required><br>
-    <label for="quantity">Quantité à retirer:</label>
-    <input type="number" id="quantity" name="quantity" required><br>
-    <label for="stock_location">Emplacement du stock:</label>
-    <input type="text" id="stock_location" name="stock_location" required><br>
-    <button type="submit">Retirer du stock</button>
-</form>
+      <form action="remove_product.php" method="post">
+        <h2>Retirer un Produit du Stock</h2>
+        <label for="product_name">Nom du produit:</label>
+        <input type="text" id="product_name" name="product_name" required><br>
+        <label for="quantity">Quantité à retirer:</label>
+        <input type="number" id="quantity" name="quantity" required><br>
+        <label for="stock_location">Emplacement du stock:</label>
+        <input type="text" id="stock_location" name="stock_location" required><br>
+        <label for="date_sortie">Date de sortie:</label>
+        <input type="date" id="date_sortie" name="date_sortie" required><br>
+        <button type="submit">Retirer du stock</button>
+    </form>
+    
 <h2>TABLE DES PRODUITS EN STOCK</h2>
 <table>
   <thead>
