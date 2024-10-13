@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Hôte : 127.0.0.1
--- Généré le : sam. 12 oct. 2024 à 17:17
+-- Généré le : dim. 13 oct. 2024 à 22:44
 -- Version du serveur : 10.4.32-MariaDB
 -- Version de PHP : 8.2.12
 
@@ -37,16 +37,18 @@ CREATE TABLE `agents` (
   `departement` varchar(50) DEFAULT NULL,
   `role` varchar(50) DEFAULT NULL,
   `date_embauche` date DEFAULT NULL,
-  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `mot_de_passe` varchar(255) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Déchargement des données de la table `agents`
 --
 
-INSERT INTO `agents` (`id`, `nom`, `prenom`, `email`, `telephone`, `adresse`, `departement`, `role`, `date_embauche`, `created_at`) VALUES
-(1, 'birego', 'Christian', 'christianbirego3@gmail.com', '0974336652', 'nord-kivu\\r\\nGoma', 'lundry', 'agent', '2024-10-12', '2024-10-12 11:51:14'),
-(3, 'Habamungu', 'Christian', 'numericbtech@gmail.com', '0974336652', 'Av muchacha', 'stock', 'admin', '2024-10-22', '2024-10-12 12:02:06');
+INSERT INTO `agents` (`id`, `nom`, `prenom`, `email`, `telephone`, `adresse`, `departement`, `role`, `date_embauche`, `created_at`, `mot_de_passe`) VALUES
+(1, 'birego', 'Christian', 'christianbirego3@gmail.com', '0974336652', 'nord-kivu\\r\\nGoma', 'lundry', 'agent', '2024-10-12', '2024-10-12 11:51:14', ''),
+(3, 'Habamungu', 'Christian', 'numericbtech@gmail.com', '0974336652', 'Av muchacha', 'stock', 'admin', '2024-10-22', '2024-10-12 12:02:06', ''),
+(5, 'birego', 'Christian', 'numericbtech1@gmail.com', '0974336652', 'nord-kivu12', 'stock', 'admin', '2024-10-10', '2024-10-13 19:41:20', '$2y$10$hSgHg4tT1/LAZZgdGzlVEuYG8sms22iydzrALjSQ2T7BMSWwdTPSW');
 
 -- --------------------------------------------------------
 
@@ -73,6 +75,28 @@ INSERT INTO `paiements` (`id`, `date_paiement`, `nom_agent`, `categorie`, `monta
 (3, '2024-09-30', 'Habamungu Christian', 'avance', 400.00, '2024-10-12 12:51:40'),
 (4, '2024-09-30', 'Habamungu Christian', 'avance', 400.00, '2024-10-12 12:53:49');
 
+-- --------------------------------------------------------
+
+--
+-- Structure de la table `produits`
+--
+
+CREATE TABLE `produits` (
+  `id` int(11) NOT NULL,
+  `date_entree` date NOT NULL,
+  `nom_produit` varchar(255) NOT NULL,
+  `quantite` int(11) NOT NULL,
+  `emplacement_stock` varchar(255) NOT NULL,
+  `date_sortie` date DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Déchargement des données de la table `produits`
+--
+
+INSERT INTO `produits` (`id`, `date_entree`, `nom_produit`, `quantite`, `emplacement_stock`, `date_sortie`) VALUES
+(1, '2024-10-12', 'boisson', 30, 'resto', NULL);
+
 --
 -- Index pour les tables déchargées
 --
@@ -91,6 +115,12 @@ ALTER TABLE `paiements`
   ADD PRIMARY KEY (`id`);
 
 --
+-- Index pour la table `produits`
+--
+ALTER TABLE `produits`
+  ADD PRIMARY KEY (`id`);
+
+--
 -- AUTO_INCREMENT pour les tables déchargées
 --
 
@@ -98,13 +128,19 @@ ALTER TABLE `paiements`
 -- AUTO_INCREMENT pour la table `agents`
 --
 ALTER TABLE `agents`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT pour la table `paiements`
 --
 ALTER TABLE `paiements`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+
+--
+-- AUTO_INCREMENT pour la table `produits`
+--
+ALTER TABLE `produits`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
