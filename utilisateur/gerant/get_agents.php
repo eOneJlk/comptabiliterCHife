@@ -1,7 +1,13 @@
 <?php
-// Inclure la connexion à la base de données
 require_once '../../dbconnexion.php';
+session_start();
 
+// Vérifier si l'utilisateur est connecté
+if (!isset($_SESSION['agent_id'])) {
+    // Rediriger vers la page de connexion si l'utilisateur n'est pas connecté
+    header("Location: ../../login.php");
+    exit();
+}
 // Vérifier si une recherche est effectuée
 if (isset($_GET['query'])) {
     $search = $_GET['query'];

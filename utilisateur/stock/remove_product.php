@@ -1,7 +1,22 @@
 <?php
-include('../../dbconnexion.php');
+// Inclure la connexion à la base de données
+require_once '../../dbconnexion.php';
+session_start();
 
-// Vérifier si le formulaire a été soumis
+// Vérifier si l'utilisateur est connecté
+if (!isset($_SESSION['agent_id'])) {
+    // Rediriger vers la page de connexion si l'utilisateur n'est pas connecté
+    header("Location: ../../login.php");
+    exit();
+}
+
+// Vérifier le rôle de l'utilisateur
+$roles_autorises = ['admin']; // Ajoutez ou retirez des rôles selon vos besoins
+if (!isset($_SESSION['role']) || !in_array($_SESSION['role'], $roles_autorises)) {
+    // Rediriger vers une page d'erreur ou la page d'accueil si l'utilisateur n'a pas le bon rôle
+    header("Location: ../../acces_refuse.php");
+    exit();
+}
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $product_name = $_POST['product_name'];
     $quantity = $_POST['quantity'];
@@ -25,6 +40,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
             if ($conn->query($update_sql) === TRUE) {
                 echo "Le produit a été retiré avec succès.";
+                header('Location: stock.php');
             } else {
                 echo "Erreur lors de la mise à jour : " . $conn->error;
             }

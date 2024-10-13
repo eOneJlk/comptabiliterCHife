@@ -1,6 +1,12 @@
 <?php
 require_once '../../dbconnexion.php';
-
+session_start();
+// Vérifier si l'utilisateur est connecté
+if (!isset($_SESSION['agent_id'])) {
+    // Rediriger vers la page de connexion si l'utilisateur n'est pas connecté
+    header("Location: ../../login.php");
+    exit();
+}
 // Vérifier si le formulaire a été soumis
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
