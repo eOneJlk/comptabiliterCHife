@@ -1,6 +1,22 @@
 <?php
 
-require_once '../../dbconnexion.php';;
+require_once '../../dbconnexion.php';
+session_start();
+
+// Vérifier si l'utilisateur est connecté
+if (!isset($_SESSION['agent_id'])) {
+    // Rediriger vers la page de connexion si l'utilisateur n'est pas connecté
+    header("Location: ../../login.php");
+    exit();
+}
+
+// Vérifier le rôle de l'utilisateur
+$roles_autorises = ['admin']; // Ajoutez ou retirez des rôles selon vos besoins
+if (!isset($_SESSION['role']) || !in_array($_SESSION['role'], $roles_autorises)) {
+    // Rediriger vers une page d'erreur ou la page d'accueil si l'utilisateur n'a pas le bon rôle
+    header("Location: ../../acces_refuse.php");
+    exit();
+}
 
 // Vérifier si le formulaire a été soumis
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
@@ -14,20 +30,27 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $departement = htmlspecialchars($conn->real_escape_string($_POST['departement']));
     $role = htmlspecialchars($conn->real_escape_string($_POST['role']));
     $date_embauche = htmlspecialchars($conn->real_escape_string($_POST['date_embauche']));
+    
+    // Définir un mot de passe par défaut (ex. 'agent1234')
+    $mot_de_passe_par_defaut = 'agent1234';
+
+    // Hashage du mot de passe avec l'algorithme bcrypt pour plus de sécurité
+    $mot_de_passe_hash = password_hash($mot_de_passe_par_defaut, PASSWORD_BCRYPT);
 
     // Requête SQL pour insérer un nouvel agent dans la base de données
-    $sql = "INSERT INTO agents (nom, prenom, email, telephone, adresse, departement, role, date_embauche)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+    $sql = "INSERT INTO agents (nom, prenom, email, telephone, adresse, departement, role, date_embauche, mot_de_passe)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
     // Préparation de la requête
     if ($stmt = $conn->prepare($sql)) {
-        // Lier les paramètres
-        $stmt->bind_param("ssssssss", $nom, $prenom, $email, $telephone, $adresse, $departement, $role, $date_embauche);
+        // Lier les paramètres à la requête préparée
+        $stmt->bind_param("sssssssss", $nom, $prenom, $email, $telephone, $adresse, $departement, $role, $date_embauche, $mot_de_passe_hash);
 
         // Exécuter la requête
         if ($stmt->execute()) {
             echo "Agent créé avec succès!";
             header('Location: gerant.html');
+            exit();
         } else {
             echo "Erreur lors de la création de l'agent : " . $conn->error;
         }

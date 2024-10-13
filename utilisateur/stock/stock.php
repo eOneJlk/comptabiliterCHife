@@ -1,3 +1,23 @@
+<?php
+// Inclure la connexion à la base de données
+require_once '../../dbconnexion.php';
+session_start();
+
+// Vérifier si l'utilisateur est connecté
+if (!isset($_SESSION['agent_id'])) {
+    // Rediriger vers la page de connexion si l'utilisateur n'est pas connecté
+    header("Location: ../../login.php");
+    exit();
+}
+
+// Vérifier le rôle de l'utilisateur
+$roles_autorises = ['admin']; // Ajoutez ou retirez des rôles selon vos besoins
+if (!isset($_SESSION['role']) || !in_array($_SESSION['role'], $roles_autorises)) {
+    // Rediriger vers une page d'erreur ou la page d'accueil si l'utilisateur n'a pas le bon rôle
+    header("Location: ../../acces_refuse.php");
+    exit();
+}
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -126,9 +146,6 @@
         </thead>
         <tbody>
             <?php
-            // Inclure la connexion à la base de données
-            include('../../dbconnexion.php');
-
             // Requête pour récupérer les produits en stock
             $sql = "SELECT * FROM produits";
             $result = $conn->query($sql);
