@@ -25,7 +25,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $stmt->bind_result($id, $db_email, $db_mot_de_passe, $role);
             $stmt->fetch();
 
-            if (password_verify($mot_de_passe, $db_mot_de_passe)) {
+            if (password_verify(password: $mot_de_passe, $db_mot_de_passe)) {
                 // Si le mot de passe est correct, démarrer une session
                 session_start();
                 $_SESSION['agent_id'] = $id;

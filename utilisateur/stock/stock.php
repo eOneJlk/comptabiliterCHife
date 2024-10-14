@@ -115,7 +115,7 @@ if (!isset($_SESSION['role']) || !in_array($_SESSION['role'], $roles_autorises))
           }
 
           // Fermer la connexion
-          $conn->close();
+        
           ?>
         </tbody>
       </table>
@@ -146,7 +146,8 @@ if (!isset($_SESSION['role']) || !in_array($_SESSION['role'], $roles_autorises))
         </thead>
         <tbody>
             <?php
-            // Requête pour récupérer les produits en stock
+            // Requête pour récupérer les produits en 
+            include('../../dbconnexion.php');
             $sql = "SELECT * FROM produits";
             $result = $conn->query($sql);
 
