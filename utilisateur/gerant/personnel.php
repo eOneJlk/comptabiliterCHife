@@ -148,6 +148,7 @@ if (!isset($_SESSION['agent_id'])) {
                 <th>Département</th>
                 <th>Rôle</th>
                 <th>Date d'embauche</th>
+                <th>action</th>
             </tr>
         </thead>
         <tbody>
