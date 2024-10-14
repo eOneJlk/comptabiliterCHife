@@ -118,8 +118,12 @@ if (!isset($_SESSION['agent_id'])) {
         <label for="role">Rôle:</label>
         <select id="role" name="role" required>
             <option value="agent">Agent</option>
-            <option value="manager">Manager</option>
+            <option value="dg">Directeur genral</option>
             <option value="admin">Administrateur</option>
+            <option value="stock">Stock</option>
+            <option value="caisse">Caisse</option>
+            <option value="comptabilite">Comptabilite</option>
+            <option value="gerant">Gerant</option>
         </select><br>
       
         <label for="date_embauche">Date d'embauche:</label>
