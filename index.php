@@ -34,12 +34,13 @@ $nom_complet = $agent['nom'] . ' ' . $agent['prenom'];
     <header>
         <nav>
             <div class="logo">Dashboard</div>
-            <ul class="nav-links">
-                <li><a href="#home">Home</a></li>
-                <li><a href="#table-des-données">données</a></li>
-                <li><a href="#reports">Rapports</a></li>
-                <li><a href="#settings">Paramètres</a></li>
-            </ul>
+            <div class="nav-links" style="display: flex; justify-content: space-between; align-items: center; padding: 20px; background-color: #f9f9f9; border-radius: 5px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);">
+                <a href="utilisateur/dg.htm" class="nav-link" style="background-color: hwb(0 80% 20%); color: white; padding: 10px 20px; border: none; border-radius: 4px; cursor: pointer;">DG</a>
+                <a href="utilisateur/gerant.html" class="nav-link" style="background-color: hwb(0 80% 20%); color: white; padding: 10px 20px; border: none; border-radius: 4px; cursor: pointer;">Gerant</a>
+                <a href="utilisateur/comptabilite.html" class="nav-link" style="background-color: hwb(0 80% 20%); color: white; padding: 10px 20px; border: none; border-radius: 4px; cursor: pointer;">Comptabilite</a>
+                <a href="utilisateur/stock.php" class="nav-link" style="background-color: hwb(0 80% 20%); color: white; padding: 10px 20px; border: none; border-radius: 4px; cursor: pointer;">Stok</a>
+                <a href="utilisateur/caisse.html" class="nav-link" style="background-color: hwb(0 80% 20%); color: white; padding: 10px 20px; border: none; border-radius: 4px; cursor: pointer;">Caisse</a>
+            </div>
             <div class="user-profile">
                 <img src="assets/img/logo_2.png" alt="User Avatar">
                 <span><?php echo htmlspecialchars($nom_complet); ?></span>
