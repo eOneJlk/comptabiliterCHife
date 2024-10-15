@@ -7,6 +7,43 @@
     <link rel="stylesheet" href="assets/css/style_utilisateur.css">
     <style>
         /* Ajout de styles pour les graphiques */
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: #fff; /* Couleur de fond */
+            padding: 10px 20px; /* Espacement */
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Ombre */
+        }
+
+        .logo-img {
+            width: 100px;
+            height: 100px;
+            border-radius: 20px;
+            margin: 10px;
+        }
+
+        .nav-links {
+            display: flex;
+            list-style-type: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .nav-item {
+            margin: 0 15px; /* Espacement entre les éléments */
+        }
+
+        .nav-link {
+            text-decoration: none;
+            color: #333;
+            font-weight: bold;
+            transition: color 0.3s; /* Transition pour l'effet de survol */
+        }
+
+        .nav-link:hover {
+            color: #4CAF50; /* Couleur au survol */
+        }
         .dashboard-section {
             background-color: #f9f9f9;
             padding: 20px;
@@ -73,14 +110,15 @@
 </head>
 <body>
     <header>
-        <nav>
-            <a class="logo" href="#home"><img src="assets/img/logo_2.png" alt="Logo" style="width: 100px; height: 100px; border-radius: 20px; margin: 10px;"></a>
-              <ul class="nav-links" style="display: flex; justify-content: space-between; align-items: center; padding: 0; margin: 0;">
-                <li style="list-style-type: none; margin: 10px;"><a href="index.php" style="text-decoration: none; color: #333; font-weight: bold;">admin</a></li>
-                <li style="list-style-type: none; margin: 10px;"><a href="#table_des_rapports" style="text-decoration: none; color: #333; font-weight: bold;">Les Tables de Données</a></li>
-              </ul>
+        <nav class="navbar">
+            <a class="logo" href="#home"><img src="assets/img/logo_2.png" alt="Logo" class="logo-img"></a>
+            <ul class="nav-links">
+                <li class="nav-item"><a href="index.php" class="nav-link">admin</a></li>
+                <li class="nav-item"><a href="#table_des_rapports" class="nav-link">Les Tables de Données</a></li>
+            </ul>
         </nav>
     </header>
+    
 
     <button id="filterButton" style="background-color: #4CAF50; color: white; padding: 10px 15px; border: none; border-radius: 5px; cursor: pointer;">Filtrer par date</button>
     <div id="filterDates" style="display: none;">
