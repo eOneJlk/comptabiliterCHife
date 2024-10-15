@@ -72,15 +72,6 @@ $reste_total = $entrees_totales - $sorties_totales;
              <input type="date" id="endDate" name="endDate">
         <button id="applyFilter" style="background-color: #4CAF50; color: white; padding: 10px 15px; border: none; border-radius: 5px; cursor: pointer;">Appliquer</button>
     </div>
-    <script>
-        document.getElementById('filterButton').addEventListener('click', function() {
-            document.getElementById('filterDates').style.display = 'block';
-        });
-        document.getElementById('applyFilter').addEventListener('click', function() {
-            // Apply filter logic here
-            document.getElementById('filterDates').style.display = 'none';
-        });
-    </script>
 
     <main>
        <section style="background-color: #ffffff; border-radius: 15px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); padding: 30px; max-width: 800px; margin: 0 auto;">
@@ -207,6 +198,7 @@ $reste_total = $entrees_totales - $sorties_totales;
             <table>
                 <thead>
                     <tr>
+                        <th>ID</th>
                         <th>Date</th>
                         <th>Type de transaction</th>
                         <th>Montant</th>
@@ -218,24 +210,52 @@ $reste_total = $entrees_totales - $sorties_totales;
                 </thead>
                 <tbody>
                 <?php
-                $sql = "SELECT date, type, montant, details, compte, etat FROM transactions_caisse ORDER BY date DESC";
-                $result = $conn->query($sql);
+                $query = "SELECT * FROM transactions_caisse ORDER BY date DESC";
+                $result = $conn->query($query);
 
-                if ($result->num_rows > 0) {
-                    while($row = $result->fetch_assoc()) {
-                        echo "<tr>";
-                        echo "<td>" . $row["date"] . "</td>";
-                        echo "<td>" . $row["type"] . "</td>";
-                        echo "<td>" . $row["montant"] . " $" . "</td>";
-                        echo "<td>" . $row["details"] . "</td>";
-                        echo "<td>" . $row["compte"] . "</td>";
-                        echo "<td><button style='background-color: #4CAF50; color: white; padding: 5px 10px; border: none; border-radius: 3px; margin-right: 5px;'>Modifier</button><button style='background-color: #f44336; color: white; padding: 5px 10px; border: none; border-radius: 3px;'>Supprimer</button></td>";
-                            echo "<td><span style='background-color: #FFD700; color: black; padding: 5px 10px; border-radius: 3px;'>À approuver</span></td>";
-                            echo "</tr>";
-                        echo "</tr>";
+                while ($transaction = $result->fetch_assoc()) {
+                    echo "<tr>";
+                    echo "<td>" . htmlspecialchars($transaction['id']) . "</td>";
+                    echo "<td>" . htmlspecialchars($transaction['date']) . "</td>";
+                    echo "<td>" . htmlspecialchars($transaction['type']) . "</td>";
+                    echo "<td>" . htmlspecialchars($transaction['montant']) . "</td>";
+                    echo "<td>" . htmlspecialchars($transaction['details']) . "</td>";
+                    echo "<td>" . htmlspecialchars($transaction['compte']) . "</td>";
+                    
+                    if ($transaction['etat'] == 'pending') {
+                        echo "<td>
+                                <form style='display:inline;' action='modifier_transaction.php' method='POST'>
+                                    <input type='hidden' name='transaction_id' value='" . $transaction['id'] . "'>
+                                    <button type='submit' style='background-color: #4CAF50; color: white; padding: 5px 10px; border: none; border-radius: 3px; margin-right: 5px;'>Modifier</button>
+                                </form>
+                                <form style='display:inline;' action='supprimer_transaction.php' method='POST' onsubmit='return confirm(\"Êtes-vous sûr de vouloir supprimer cette transaction ?\");'>
+                                    <input type='hidden' name='transaction_id' value='" . $transaction['id'] . "'>
+                                    <button type='submit' style='background-color: #f44336; color: white; padding: 5px 10px; border: none; border-radius: 3px;'>Supprimer</button>
+                                </form>
+                              </td>";
+                    } else {
+                        echo "<td>-</td>"; // Pas de boutons pour les transactions non en attente
                     }
-                } else {
-                    echo "<tr><td colspan='5'>Aucune transaction trouvée</td></tr>";
+                    
+                    // Affichage de l'état
+                    $etat_style = '';
+                    switch ($transaction['etat']) {
+                        case 'pending':
+                            $etat_style = 'background-color: #FFD700; color: black;';
+                            break;
+                        case 'approved':
+                            $etat_style = 'background-color: #4CAF50; color: white;';
+                            break;
+                        case 'rejected':
+                            $etat_style = 'background-color: #f44336; color: white;';
+                            break;
+                        default:
+                            $etat_style = 'background-color: #808080; color: white;';
+                    }
+                    
+                    echo "<td><span style='padding: 5px 10px; border-radius: 3px; " . $etat_style . "'>" . ucfirst(htmlspecialchars($transaction['etat'])) . "</span></td>";
+                    
+                    echo "</tr>";
                 }
                 ?>
                 </tbody>
@@ -260,25 +280,61 @@ $reste_total = $entrees_totales - $sorties_totales;
                 </thead>
                 <tbody>
                     <?php
-                    $sql = "SELECT * FROM transactions_bancaires ORDER BY date DESC";
-                    $result = $conn->query($sql);
+                    $query = "SELECT * FROM transactions_bancaires ORDER BY date DESC";
+                    $result = $conn->query($query);
 
                     if ($result->num_rows > 0) {
-                        while($row = $result->fetch_assoc()) {
+                        while ($transaction = $result->fetch_assoc()) {
                             echo "<tr>";
-                            echo "<td>" . $row["id"] . "</td>";
-                            echo "<td>" . $row["transaction_type"] . "</td>";
-                            echo "<td>" . $row["amount"] . " $" . "</td>";
-                            echo "<td>" . $row["date"] . "</td>";
-                            echo "<td>" . $row["invoice_number"] . "</td>";
-                            echo "<td>" . $row["slip_number"] . "</td>";
-                            echo "<td>" . $row["created_at"] . "</td>";
-                            echo "<td><button style='background-color: #4CAF50; color: white; padding: 5px 10px; border: none; border-radius: 3px; margin-right: 5px;'>Modifier</button><button style='background-color: #f44336; color: white; padding: 5px 10px; border: none; border-radius: 3px;'>Supprimer</button></td>";
-                            echo "<td><span style='background-color: #FFD700; color: black; padding: 5px 10px; border-radius: 3px;'>À approuver</span></td>";
+                            echo "<td>" . htmlspecialchars($transaction['id']) . "</td>";
+                            echo "<td>" . htmlspecialchars($transaction['date']) . "</td>";
+                            echo "<td>" . htmlspecialchars($transaction['transaction_type']) . "</td>";
+                            echo "<td>" . htmlspecialchars($transaction['amount']) . "</td>";
+                            echo "<td>" . htmlspecialchars($transaction['invoice_number']) . "</td>";
+                            echo "<td>" . htmlspecialchars($transaction['slip_number']) . "</td>";
+                            
+                            if ($transaction['etat'] == 'pending') {
+                                echo "<td>
+                                        <form style='display:inline;' action='modifier_transaction_bancaire.php' method='POST'>
+                                            <input type='hidden' name='transaction_id' value='" . $transaction['id'] . "'>
+                                            <button type='submit' style='background-color: #4CAF50; color: white; padding: 5px 10px; border: none; border-radius: 3px; margin-right: 5px;'>Modifier</button>
+                                        </form>
+                                        <form style='display:inline;' action='supprimer_transaction_bancaire.php' method='POST' onsubmit='return confirm(\"Êtes-vous sûr de vouloir supprimer cette transaction bancaire ?\");'>
+                                            <input type='hidden' name='transaction_id' value='" . $transaction['id'] . "'>
+                                            <button type='submit' style='background-color: #f44336; color: white; padding: 5px 10px; border: none; border-radius: 3px;'>Supprimer</button>
+                                        </form>
+                                      </td>";
+                            } else {
+                                echo "<td>-</td>"; // Pas de boutons pour les transactions non en attente
+                            }
+                            
+                            // Affichage de l'état
+                            $etat_style = '';
+                            $etat_text = '';
+                            switch ($transaction['etat']) {
+                                case 'pending':
+                                    $etat_style = 'background-color: #FFD700; color: black;';
+                                    $etat_text = 'À approuver';
+                                    break;
+                                case 'approved':
+                                    $etat_style = 'background-color: #4CAF50; color: white;';
+                                    $etat_text = 'Approuvé';
+                                    break;
+                                case 'rejected':
+                                    $etat_style = 'background-color: #f44336; color: white;';
+                                    $etat_text = 'Rejeté';
+                                    break;
+                                default:
+                                    $etat_style = 'background-color: #808080; color: white;';
+                                    $etat_text = ucfirst($transaction['etat']);
+                            }
+                            
+                            echo "<td><span style='padding: 5px 10px; border-radius: 3px; " . $etat_style . "'>" . $etat_text . "</span></td>";
+                            
                             echo "</tr>";
                         }
                     } else {
-                        echo "<tr><td colspan='7'>Aucune transaction bancaire trouvée</td></tr>";
+                        echo "<tr><td colspan='8'>Aucune transaction bancaire trouvée</td></tr>";
                     }
                     ?>
                 </tbody>
@@ -288,44 +344,88 @@ $reste_total = $entrees_totales - $sorties_totales;
         <section>
             <h2>Liste des Dépenses</h2>
             <?php
-            $sql = "SELECT * FROM depenses";
-            $result = $conn->query($sql);
-
+            $query = "SELECT * FROM depenses ORDER BY date DESC";
+            $result = $conn->query($query);
+            echo "<table style='width: 100%; border-collapse: collapse;'>";
+            echo "<thead>";
+            echo "<tr>";
+            echo "<th style='border: 1px solid #ddd; padding: 8px;'>ID</th>";
+            echo "<th style='border: 1px solid #ddd; padding: 8px;'>Date</th>";
+            echo "<th style='border: 1px solid #ddd; padding: 8px;'>Nom</th>";
+            echo "<th style='border: 1px solid #ddd; padding: 8px;'>Description</th>";
+            echo "<th style='border: 1px solid #ddd; padding: 8px;'>Montant</th>";
+            echo "<th style='border: 1px solid #ddd; padding: 8px;'>Actions</th>";
+            echo "<th style='border: 1px solid #ddd; padding: 8px;'>État</th>";
+            echo "</tr>";
+            echo "</thead>";
+            echo "<tbody>";
+            
             if ($result->num_rows > 0) {
-                echo "<table border='1'>
-                        <tr>
-                            <th>ID</th>
-                            <th>Date</th>
-                            <th>Nom</th>
-                            <th>Description</th>
-                            <th>Montant</th>
-                            <th>Date de Création</th>
-                            <th>Action</th>
-                            <th>Etat</th>
-                        </tr>";
-                
-                while($row = $result->fetch_assoc()) {
-                    echo "<tr>
-                            <td>" . $row["id"] . "</td>
-                            <td>" . $row["date"] . "</td>
-                            <td>" . $row["nom"] . "</td>
-                            <td>" . $row["description"] . "</td>
-                            <td>" . $row["amount"] . " $" . "</td>
-                            <td>" . $row["created_at"] . "</td>";
-                            echo "<td><button style='background-color: #4CAF50; color: white; padding: 5px 10px; border: none; border-radius: 3px; margin-right: 5px;'>Modifier</button><button style='background-color: #f44336; color: white; padding: 5px 10px; border: none; border-radius: 3px;'>Supprimer</button></td>";
-                            echo "<td><span style='background-color: #FFD700; color: black; padding: 5px 10px; border-radius: 3px;'>À approuver</span></td>";
-                            echo "</tr>";
+                while ($depense = $result->fetch_assoc()) {
+                    echo "<tr>";
+                    echo "<td style='border: 1px solid #ddd; padding: 8px;'>" . htmlspecialchars($depense['id']) . "</td>";
+                    echo "<td style='border: 1px solid #ddd; padding: 8px;'>" . htmlspecialchars($depense['date']) . "</td>";
+                    echo "<td style='border: 1px solid #ddd; padding: 8px;'>" . htmlspecialchars($depense['nom']) . "</td>";
+                    echo "<td style='border: 1px solid #ddd; padding: 8px;'>" . htmlspecialchars($depense['description']) . "</td>";
+                    echo "<td style='border: 1px solid #ddd; padding: 8px;'>" . htmlspecialchars($depense['amount']) . "</td>";
+                    
+                    if ($depense['etat'] == 'pending') {
+                        echo "<td style='border: 1px solid #ddd; padding: 8px;'>
+                                <form style='display:inline;' action='modifier_depense.php' method='POST'>
+                                    <input type='hidden' name='depense_id' value='" . $depense['id'] . "'>
+                                    <button type='submit' style='background-color: #4CAF50; color: white; padding: 5px 10px; border: none; border-radius: 3px; margin-right: 5px;'>Modifier</button>
+                                </form>
+                                <form style='display:inline;' action='supprimer_depense.php' method='POST' onsubmit='return confirm(\"Êtes-vous sûr de vouloir supprimer cette dépense ?\");'>
+                                    <input type='hidden' name='depense_id' value='" . $depense['id'] . "'>
+                                    <button type='submit' style='background-color: #f44336; color: white; padding: 5px 10px; border: none; border-radius: 3px;'>Supprimer</button>
+                                </form>
+                              </td>";
+                    } else {
+                        echo "<td style='border: 1px solid #ddd; padding: 8px;'>-</td>"; // Pas de boutons pour les dépenses non en attente
+                    }
+                    
+                    // Affichage de l'état
+                    $etat_style = '';
+                    $etat_text = '';
+                    switch ($depense['etat']) {
+                        case 'pending':
+                            $etat_style = 'background-color: #FFD700; color: black;';
+                            $etat_text = 'À approuver';
+                            break;
+                        case 'approved':
+                            $etat_style = 'background-color: #4CAF50; color: white;';
+                            $etat_text = 'Approuvé';
+                            break;
+                        case 'rejected':
+                            $etat_style = 'background-color: #f44336; color: white;';
+                            $etat_text = 'Rejeté';
+                            break;
+                        default:
+                            $etat_style = 'background-color: #808080; color: white;';
+                            $etat_text = ucfirst($depense['etat']);
+                    }
+                    
+                    echo "<td style='border: 1px solid #ddd; padding: 8px;'><span style='padding: 5px 10px; border-radius: 3px; " . $etat_style . "'>" . $etat_text . "</span></td>";
+                    
                     echo "</tr>";
                 }
-                echo "</table>";
             } else {
-                echo "Aucune dépense trouvée.";
+                echo "<tr><td colspan='7' style='border: 1px solid #ddd; padding: 8px;'>Aucune dépense trouvée</td></tr>";
             }
+            echo "</tbody>";
+            echo "</table>";
             ?>
         </section>
 
     </main>
   <script>
+     document.getElementById('filterButton').addEventListener('click', function() {
+            document.getElementById('filterDates').style.display = 'block';
+        });
+        document.getElementById('applyFilter').addEventListener('click', function() {
+            // Apply filter logic here
+            document.getElementById('filterDates').style.display = 'none';
+        });
        // Get the modals
        var caisseModal = document.getElementById("caisseModal");
     var transactionModal = document.getElementById("transactionModal");
