@@ -205,7 +205,7 @@ if (!isset($_SESSION['role']) || !in_array($_SESSION['role'], $roles_autorises))
         </form>
     </div>
 </div>
-<h2>TABLE DES PRODUITS EN STOCK</h2>
+<h2>TABLE DES RETRAIT PRODUITS EN STOCK</h2>
     <table>
         <thead>
             <tr>
