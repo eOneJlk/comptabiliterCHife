@@ -154,7 +154,7 @@ if (!isset($_SESSION['agent_id'])) {
         <tbody>
         <?php
         // Requête SQL pour récupérer la liste des agents
-        $sql = "SELECT nom, prenom, email, telephone, adresse, departement, role, date_embauche FROM agents";
+        $sql = "SELECT id, nom, prenom, email, telephone, adresse, departement, role, date_embauche FROM agents";
         $result = $conn->query($sql);
 
         if ($result === false) {
@@ -171,6 +171,10 @@ if (!isset($_SESSION['agent_id'])) {
                 echo "<td>" . htmlspecialchars($row['departement']) . "</td>";
                 echo "<td>" . htmlspecialchars($row['role']) . "</td>";
                 echo "<td>" . htmlspecialchars($row['date_embauche']) . "</td>";
+                echo "<td>
+                    <button onclick='modifierAgent(" . htmlspecialchars($row['id']) . ")' style='background-color: red;cursor: pointer;'>Modifier</button>
+    <button onclick='confirmerSuppression(" . htmlspecialchars($row['id']) . ")'>Supprimer</button>
+</td>";
                 echo "</tr>";
             }
         } else {
@@ -273,6 +277,17 @@ if (!isset($_SESSION['agent_id'])) {
 
     <!-- Script pour l'Auto-Complétion des Noms d'Agents -->
     <script>
+        function modifierAgent(id) {
+    // Rediriger vers une page de modification avec l'ID de l'agent
+    window.location.href = 'modifier_agent.php?id=' + id;
+}
+
+function confirmerSuppression(id) {
+    if (confirm('Êtes-vous sûr de vouloir supprimer cet agent ?')) {
+        // Si l'utilisateur confirme, rediriger vers un script de suppression
+        window.location.href = 'supprimer_agent.php?id=' + id;
+    }
+}
     document.getElementById('agent_name').addEventListener('input', function() {
         let query = this.value;
 
