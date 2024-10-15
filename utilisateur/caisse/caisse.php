@@ -63,15 +63,15 @@ $reste_total = $entrees_totales - $sorties_totales;
            <div style="display: flex; justify-content: space-between; flex-wrap: wrap;">
                <div style="background-color: #e6ffe6; padding: 20px; width: calc(33.33% - 20px); margin-bottom: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);">
                    <h3 style="color: #2ecc71; margin-bottom: 10px;">Entrées totales</h3>
-                   <p style="font-size: 18px; font-weight: bold;"><?php echo number_format($entrees_totales, 2, ',', ' '); ?> €</p>
+                   <p style="font-size: 18px; font-weight: bold;"><?php echo number_format($entrees_totales, 2, ',', ' '); ?> $</p>
                </div>
                <div style="background-color: #ffe6e6; padding: 20px; width: calc(33.33% - 20px); margin-bottom: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);">
                    <h3 style="color: #e74c3c; margin-bottom: 10px;">Sorties totales</h3>
-                   <p style="font-size: 18px; font-weight: bold;"><?php echo number_format($sorties_totales, 2, ',', ' '); ?> €</p>
+                   <p style="font-size: 18px; font-weight: bold;"><?php echo number_format($sorties_totales, 2, ',', ' '); ?> $</p>
                </div>
                <div style="background-color: #e6f3ff; padding: 20px; width: calc(33.33% - 20px); margin-bottom: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);">
                    <h3 style="color: #3498db; margin-bottom: 10px;">Reste total</h3>
-                   <p style="font-size: 18px; font-weight: bold;"><?php echo number_format($reste_total, 2, ',', ' '); ?> €</p>
+                   <p style="font-size: 18px; font-weight: bold;"><?php echo number_format($reste_total, 2, ',', ' '); ?> $</p>
                </div>
            </div>
        </section>
@@ -193,7 +193,7 @@ $reste_total = $entrees_totales - $sorties_totales;
                 </thead>
                 <tbody>
                 <?php
-                $sql = "SELECT date, type, montant, details, compte FROM transactions_caisse ORDER BY date DESC";
+                $sql = "SELECT date, type, montant, details, compte, etat FROM transactions_caisse ORDER BY date DESC";
                 $result = $conn->query($sql);
 
                 if ($result->num_rows > 0) {
@@ -201,7 +201,7 @@ $reste_total = $entrees_totales - $sorties_totales;
                         echo "<tr>";
                         echo "<td>" . $row["date"] . "</td>";
                         echo "<td>" . $row["type"] . "</td>";
-                        echo "<td>" . $row["montant"] . "</td>";
+                        echo "<td>" . $row["montant"] . " $" . "</td>";
                         echo "<td>" . $row["details"] . "</td>";
                         echo "<td>" . $row["compte"] . "</td>";
                         echo "<td><button style='background-color: #4CAF50; color: white; padding: 5px 10px; border: none; border-radius: 3px; margin-right: 5px;'>Modifier</button><button style='background-color: #f44336; color: white; padding: 5px 10px; border: none; border-radius: 3px;'>Supprimer</button></td>";
@@ -243,7 +243,7 @@ $reste_total = $entrees_totales - $sorties_totales;
                             echo "<tr>";
                             echo "<td>" . $row["id"] . "</td>";
                             echo "<td>" . $row["transaction_type"] . "</td>";
-                            echo "<td>" . $row["amount"] . "</td>";
+                            echo "<td>" . $row["amount"] . " $" . "</td>";
                             echo "<td>" . $row["date"] . "</td>";
                             echo "<td>" . $row["invoice_number"] . "</td>";
                             echo "<td>" . $row["slip_number"] . "</td>";
@@ -285,7 +285,7 @@ $reste_total = $entrees_totales - $sorties_totales;
                             <td>" . $row["date"] . "</td>
                             <td>" . $row["nom"] . "</td>
                             <td>" . $row["description"] . "</td>
-                            <td>" . $row["amount"] . "</td>
+                            <td>" . $row["amount"] . " $" . "</td>
                             <td>" . $row["created_at"] . "</td>";
                             echo "<td><button style='background-color: #4CAF50; color: white; padding: 5px 10px; border: none; border-radius: 3px; margin-right: 5px;'>Modifier</button><button style='background-color: #f44336; color: white; padding: 5px 10px; border: none; border-radius: 3px;'>Supprimer</button></td>";
                             echo "<td><span style='background-color: #FFD700; color: black; padding: 5px 10px; border-radius: 3px;'>À approuver</span></td>";

@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Hôte : 127.0.0.1
--- Généré le : dim. 13 oct. 2024 à 22:44
+-- Généré le : mar. 15 oct. 2024 à 20:21
 -- Version du serveur : 10.4.32-MariaDB
 -- Version de PHP : 8.2.12
 
@@ -53,6 +53,29 @@ INSERT INTO `agents` (`id`, `nom`, `prenom`, `email`, `telephone`, `adresse`, `d
 -- --------------------------------------------------------
 
 --
+-- Structure de la table `depenses`
+--
+
+CREATE TABLE `depenses` (
+  `id` int(11) NOT NULL,
+  `date` date NOT NULL,
+  `nom` varchar(100) NOT NULL,
+  `description` text NOT NULL,
+  `amount` decimal(10,2) NOT NULL,
+  `etat` enum('pending','approved','rejected') NOT NULL DEFAULT 'pending',
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Déchargement des données de la table `depenses`
+--
+
+INSERT INTO `depenses` (`id`, `date`, `nom`, `description`, `amount`, `etat`, `created_at`) VALUES
+(1, '2024-10-15', 'ACHAT MATERIEL', '0', 39990.00, 'pending', '2024-10-15 17:08:36');
+
+-- --------------------------------------------------------
+
+--
 -- Structure de la table `paiements`
 --
 
@@ -87,15 +110,70 @@ CREATE TABLE `produits` (
   `nom_produit` varchar(255) NOT NULL,
   `quantite` int(11) NOT NULL,
   `emplacement_stock` varchar(255) NOT NULL,
-  `date_sortie` date DEFAULT NULL
+  `date_sortie` date DEFAULT NULL,
+  `date_modification` datetime DEFAULT NULL,
+  `id_modificateur` int(11) DEFAULT NULL,
+  `date_suppression` datetime DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Déchargement des données de la table `produits`
 --
 
-INSERT INTO `produits` (`id`, `date_entree`, `nom_produit`, `quantite`, `emplacement_stock`, `date_sortie`) VALUES
-(1, '2024-10-12', 'boisson', 30, 'resto', NULL);
+INSERT INTO `produits` (`id`, `date_entree`, `nom_produit`, `quantite`, `emplacement_stock`, `date_sortie`, `date_modification`, `id_modificateur`, `date_suppression`) VALUES
+(1, '2024-10-12', 'boisson', 60, 'resto', NULL, '2024-10-15 17:28:59', 5, NULL),
+(2, '2024-10-15', 'nouriture', 0, 'resto', '2024-10-15', NULL, NULL, NULL);
+
+-- --------------------------------------------------------
+
+--
+-- Structure de la table `transactions_bancaires`
+--
+
+CREATE TABLE `transactions_bancaires` (
+  `id` int(11) NOT NULL,
+  `transaction_type` enum('deposit','withdrawal') NOT NULL,
+  `amount` decimal(10,2) NOT NULL,
+  `date` date NOT NULL,
+  `invoice_number` varchar(50) NOT NULL,
+  `slip_number` varchar(50) NOT NULL,
+  `etat` enum('pending','approved','rejected') NOT NULL DEFAULT 'pending',
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Déchargement des données de la table `transactions_bancaires`
+--
+
+INSERT INTO `transactions_bancaires` (`id`, `transaction_type`, `amount`, `date`, `invoice_number`, `slip_number`, `etat`, `created_at`) VALUES
+(1, 'deposit', 2344.00, '2024-10-15', '2343647489', '121234534', 'pending', '2024-10-15 17:24:44');
+
+-- --------------------------------------------------------
+
+--
+-- Structure de la table `transactions_caisse`
+--
+
+CREATE TABLE `transactions_caisse` (
+  `id` int(11) NOT NULL,
+  `date` date NOT NULL,
+  `type` enum('entree','sortie') NOT NULL,
+  `montant` decimal(10,2) NOT NULL,
+  `details` text NOT NULL,
+  `compte` varchar(50) NOT NULL,
+  `etat` enum('pending','approved','rejected') NOT NULL DEFAULT 'pending',
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Déchargement des données de la table `transactions_caisse`
+--
+
+INSERT INTO `transactions_caisse` (`id`, `date`, `type`, `montant`, `details`, `compte`, `etat`, `created_at`) VALUES
+(1, '2024-10-15', 'entree', 2000.00, 'ddd', 'DG', 'pending', '2024-10-15 16:26:08'),
+(2, '2024-10-15', 'entree', 2000.00, 'ddd', 'DG', 'pending', '2024-10-15 16:31:37'),
+(3, '2024-10-15', 'sortie', 24000.00, 'PAIEMENT AGENTS', '1234567890', 'pending', '2024-10-15 17:07:31'),
+(4, '2024-10-14', 'entree', 99999999.99, 'd', 'DG', 'pending', '2024-10-15 17:48:27');
 
 --
 -- Index pour les tables déchargées
@@ -107,6 +185,12 @@ INSERT INTO `produits` (`id`, `date_entree`, `nom_produit`, `quantite`, `emplace
 ALTER TABLE `agents`
   ADD PRIMARY KEY (`id`),
   ADD UNIQUE KEY `email` (`email`);
+
+--
+-- Index pour la table `depenses`
+--
+ALTER TABLE `depenses`
+  ADD PRIMARY KEY (`id`);
 
 --
 -- Index pour la table `paiements`
@@ -121,6 +205,18 @@ ALTER TABLE `produits`
   ADD PRIMARY KEY (`id`);
 
 --
+-- Index pour la table `transactions_bancaires`
+--
+ALTER TABLE `transactions_bancaires`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Index pour la table `transactions_caisse`
+--
+ALTER TABLE `transactions_caisse`
+  ADD PRIMARY KEY (`id`);
+
+--
 -- AUTO_INCREMENT pour les tables déchargées
 --
 
@@ -129,6 +225,12 @@ ALTER TABLE `produits`
 --
 ALTER TABLE `agents`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+
+--
+-- AUTO_INCREMENT pour la table `depenses`
+--
+ALTER TABLE `depenses`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT pour la table `paiements`
@@ -140,7 +242,19 @@ ALTER TABLE `paiements`
 -- AUTO_INCREMENT pour la table `produits`
 --
 ALTER TABLE `produits`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+
+--
+-- AUTO_INCREMENT pour la table `transactions_bancaires`
+--
+ALTER TABLE `transactions_bancaires`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+
+--
+-- AUTO_INCREMENT pour la table `transactions_caisse`
+--
+ALTER TABLE `transactions_caisse`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
