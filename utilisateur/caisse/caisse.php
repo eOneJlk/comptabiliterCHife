@@ -1,5 +1,38 @@
 <?php
 include '../../dbconnexion.php';
+
+// Calcul des entrées et sorties de la journée
+$date_aujourdhui = date("Y-m-d");
+
+// Transactions de caisse
+$sql_entrees_caisse = "SELECT SUM(montant) as total_entrees FROM transactions_caisse WHERE type='entree' AND DATE(date) = '$date_aujourdhui'";
+$sql_sorties_caisse = "SELECT SUM(montant) as total_sorties FROM transactions_caisse WHERE type='sortie' AND DATE(date) = '$date_aujourdhui'";
+
+$result_entrees_caisse = $conn->query($sql_entrees_caisse);
+$result_sorties_caisse = $conn->query($sql_sorties_caisse);
+
+$entrees_caisse = $result_entrees_caisse->fetch_assoc()['total_entrees'] ?? 0;
+$sorties_caisse = $result_sorties_caisse->fetch_assoc()['total_sorties'] ?? 0;
+
+// Transactions bancaires
+$sql_depots_banque = "SELECT SUM(amount) as total_depots FROM transactions_bancaires WHERE transaction_type='deposit' AND DATE(date) = '$date_aujourdhui'";
+$sql_retraits_banque = "SELECT SUM(amount) as total_retraits FROM transactions_bancaires WHERE transaction_type='withdrawal' AND DATE(date) = '$date_aujourdhui'";
+
+$result_depots_banque = $conn->query($sql_depots_banque);
+$result_retraits_banque = $conn->query($sql_retraits_banque);
+
+$depots_banque = $result_depots_banque->fetch_assoc()['total_depots'] ?? 0;
+$retraits_banque = $result_retraits_banque->fetch_assoc()['total_retraits'] ?? 0;
+
+// Dépenses
+$sql_depenses = "SELECT SUM(amount) as total_depenses FROM depenses WHERE DATE(date) = '$date_aujourdhui'";
+$result_depenses = $conn->query($sql_depenses);
+$depenses = $result_depenses->fetch_assoc()['total_depenses'] ?? 0;
+
+// Calculs finaux
+$entrees_totales = $entrees_caisse + $depots_banque;
+$sorties_totales = $sorties_caisse + $retraits_banque + $depenses;
+$reste_total = $entrees_totales - $sorties_totales;
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -25,6 +58,23 @@ include '../../dbconnexion.php';
     </header>
 
     <main>
+       <section style="background-color: #ffffff; border-radius: 15px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); padding: 30px; max-width: 800px; margin: 0 auto;">
+           <div style="background-color: #4a90e2; color: #ffffff; padding: 20px; margin-bottom: 30px; border-radius: 10px; text-align: center; font-weight: bold; font-size: 28px; text-transform: uppercase;">Tableau de bord</div>
+           <div style="display: flex; justify-content: space-between; flex-wrap: wrap;">
+               <div style="background-color: #e6ffe6; padding: 20px; width: calc(33.33% - 20px); margin-bottom: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);">
+                   <h3 style="color: #2ecc71; margin-bottom: 10px;">Entrées totales</h3>
+                   <p style="font-size: 18px; font-weight: bold;"><?php echo number_format($entrees_totales, 2, ',', ' '); ?> €</p>
+               </div>
+               <div style="background-color: #ffe6e6; padding: 20px; width: calc(33.33% - 20px); margin-bottom: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);">
+                   <h3 style="color: #e74c3c; margin-bottom: 10px;">Sorties totales</h3>
+                   <p style="font-size: 18px; font-weight: bold;"><?php echo number_format($sorties_totales, 2, ',', ' '); ?> €</p>
+               </div>
+               <div style="background-color: #e6f3ff; padding: 20px; width: calc(33.33% - 20px); margin-bottom: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);">
+                   <h3 style="color: #3498db; margin-bottom: 10px;">Reste total</h3>
+                   <p style="font-size: 18px; font-weight: bold;"><?php echo number_format($reste_total, 2, ',', ' '); ?> €</p>
+               </div>
+           </div>
+       </section>
         <section style="display: flex; justify-content: space-around; align-items: center;">
             <div>
                 <h2>Mouvement De Caisse Par Compte</h2>
@@ -137,6 +187,8 @@ include '../../dbconnexion.php';
                         <th>Montant</th>
                         <th>Détails</th>
                         <th>Compte</th>
+                        <th>Action</th>
+                        <th>Etat</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -152,6 +204,9 @@ include '../../dbconnexion.php';
                         echo "<td>" . $row["montant"] . "</td>";
                         echo "<td>" . $row["details"] . "</td>";
                         echo "<td>" . $row["compte"] . "</td>";
+                        echo "<td><button style='background-color: #4CAF50; color: white; padding: 5px 10px; border: none; border-radius: 3px; margin-right: 5px;'>Modifier</button><button style='background-color: #f44336; color: white; padding: 5px 10px; border: none; border-radius: 3px;'>Supprimer</button></td>";
+                            echo "<td><span style='background-color: #FFD700; color: black; padding: 5px 10px; border-radius: 3px;'>À approuver</span></td>";
+                            echo "</tr>";
                         echo "</tr>";
                     }
                 } else {
@@ -174,6 +229,8 @@ include '../../dbconnexion.php';
                         <th>Numéro de Facture</th>
                         <th>Numéro de Bordereau</th>
                         <th>Date de Création</th>
+                        <th>Action</th>
+                        <th>Etat</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -191,6 +248,8 @@ include '../../dbconnexion.php';
                             echo "<td>" . $row["invoice_number"] . "</td>";
                             echo "<td>" . $row["slip_number"] . "</td>";
                             echo "<td>" . $row["created_at"] . "</td>";
+                            echo "<td><button style='background-color: #4CAF50; color: white; padding: 5px 10px; border: none; border-radius: 3px; margin-right: 5px;'>Modifier</button><button style='background-color: #f44336; color: white; padding: 5px 10px; border: none; border-radius: 3px;'>Supprimer</button></td>";
+                            echo "<td><span style='background-color: #FFD700; color: black; padding: 5px 10px; border-radius: 3px;'>À approuver</span></td>";
                             echo "</tr>";
                         }
                     } else {
@@ -216,6 +275,8 @@ include '../../dbconnexion.php';
                             <th>Description</th>
                             <th>Montant</th>
                             <th>Date de Création</th>
+                            <th>Action</th>
+                            <th>Etat</th>
                         </tr>";
                 
                 while($row = $result->fetch_assoc()) {
@@ -226,6 +287,9 @@ include '../../dbconnexion.php';
                             <td>" . $row["description"] . "</td>
                             <td>" . $row["amount"] . "</td>
                             <td>" . $row["created_at"] . "</td>";
+                            echo "<td><button style='background-color: #4CAF50; color: white; padding: 5px 10px; border: none; border-radius: 3px; margin-right: 5px;'>Modifier</button><button style='background-color: #f44336; color: white; padding: 5px 10px; border: none; border-radius: 3px;'>Supprimer</button></td>";
+                            echo "<td><span style='background-color: #FFD700; color: black; padding: 5px 10px; border-radius: 3px;'>À approuver</span></td>";
+                            echo "</tr>";
                     echo "</tr>";
                 }
                 echo "</table>";
