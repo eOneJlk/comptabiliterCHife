@@ -7,7 +7,12 @@ if (!isset($_SESSION['agent_id'])) {
     header("Location: ../../login.php");
     exit();
 }
-
+$roles_autorises = ['admin','gerant'];
+if (!isset($_SESSION['role']) || !in_array($_SESSION['role'], $roles_autorises)) {
+    // Rediriger vers une page d'erreur ou la page d'accueil si l'utilisateur n'a pas le bon rôle
+    header("Location: ../../acces_refuse.php");
+    exit();
+}
 // Vérifier si l'ID de l'agent à modifier est fourni
 if (!isset($_GET['id'])) {
     header("Location: personnel.php");
@@ -60,6 +65,50 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Modifier un Agent</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+        }
+        form {
+            max-width: 600px;
+            margin: auto;
+            padding: 20px;
+            background-color: #fff;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        label {
+            display: block;
+            margin-bottom: 10px;
+        }
+        input[type="text"], input[type="email"], input[type="tel"], textarea, select {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 20px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        textarea {
+            height: 100px;
+        }
+        select {
+            padding: 10px;
+        }
+        button[type="submit"] {
+            width: 100%;
+            padding: 10px;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        button[type="submit"]:hover {
+            background-color: #0056b3;
+        }
+    </style>
 </head>
 <body>
     <h1>Modifier un Agent</h1>

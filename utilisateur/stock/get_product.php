@@ -1,6 +1,12 @@
 <?php
 include('../../dbconnexion.php');
-
+session_start();
+$roles_autorises = ['admin','stock'];
+if (!isset($_SESSION['role']) || !in_array($_SESSION['role'], $roles_autorises)) {
+    // Rediriger vers une page d'erreur ou la page d'accueil si l'utilisateur n'a pas le bon rôle
+    header("Location: ../../acces_refuse.php");
+    exit();
+}
 if(isset($_POST["query"])) {
     $output = '';
     $query = "SELECT DISTINCT nom_produit FROM produits WHERE nom_produit LIKE '%" . $_POST["query"] . "%' LIMIT 10";

@@ -11,7 +11,7 @@ if (!isset($_SESSION['agent_id'])) {
 }
 
 // Vérifier le rôle de l'utilisateur
-$roles_autorises = ['admin']; // Ajoutez ou retirez des rôles selon vos besoins
+$roles_autorises = ['admin','stock'];
 if (!isset($_SESSION['role']) || !in_array($_SESSION['role'], $roles_autorises)) {
     // Rediriger vers une page d'erreur ou la page d'accueil si l'utilisateur n'a pas le bon rôle
     header("Location: ../../acces_refuse.php");

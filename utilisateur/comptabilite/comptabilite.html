@@ -8,19 +8,59 @@
 </head>
 <body>
     <style>
-         body {
+        body {
             font-family: Arial, sans-serif;
             background-color: #f4f4f9;
             margin: 0;
             padding: 20px;
         }
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: #fff; /* Couleur de fond */
+            padding: 10px 20px; /* Espacement */
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Ombre */
+        }
+
+        .logo-img {
+            width: 100px;
+            height: 100px;
+            border-radius: 20px;
+            margin: 10px;
+        }
+
+        .nav-links {
+            display: flex;
+            list-style-type: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .nav-item {
+            margin: 0 15px; /* Espacement entre les éléments */
+        }
+
+        .nav-link {
+            text-decoration: none;
+            color: #333;
+            font-weight: bold;
+            transition: color 0.3s; /* Transition pour l'effet de survol */
+        }
+
+        .nav-link:hover {
+            color: #4CAF50; /* Couleur au survol */
+        }
         h2 {
             color: #333;
+            border-bottom: 2px solid #4CAF50;
+            padding-bottom: 10px;
         }
         table {
             width: 100%;
             border-collapse: collapse;
             margin-bottom: 20px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
         }
         table, th, td {
             border: 1px solid #ccc;
@@ -30,7 +70,8 @@
             text-align: left;
         }
         th {
-            background-color: #f8f8f8;
+            background-color: #4CAF50;
+            color: white;
         }
         .dashboard {
             display: flex;
@@ -44,12 +85,18 @@
             width: 23%;
             text-align: center;
             border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s;
+        }
+        .dashboard-item:hover {
+            transform: scale(1.05);
         }
         .bilan {
             background-color: #333;
             color: white;
             padding: 15px;
             border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
         }
         .bilan p {
             font-size: 1.2em;
@@ -57,22 +104,18 @@
         
     </style>
     <header>
-        <div class="user-profile">
-          <nav>
-            <a class="logo" href="#home"><img src="assets/img/logo_2.png" alt="Logo" style="place-items:initial; width: 100px; height: 100px; border-radius: 20px; margin: 10px;"></a>
-              <ul class="nav-links" style="display: flex; justify-content: space-between; align-items: center; padding: 0; margin: 0;">
-                <li style="list-style-type: none; margin: 10px;"><a href="#home" style="text-decoration: none; color: #333; font-weight: bold;">Accueil</a></li>
-                <li style="list-style-type: none; margin: 10px;"><a href="#dashboard.html" style="text-decoration: none; color: #333; font-weight: bold;">Dashboard</a></li>
-                <li style="list-style-type: none; margin: 10px;"><a href="#rapports-et-statistiques" style="text-decoration: none; color: #333; font-weight: bold;">Statistiques</a></li>
-              </ul>
-          </nav>
-            <?php 
-              echo htmlspecialchars($nom_complet); 
-            ?>
-            </span>
-            <a href="logout.php" class="logout-link" style="margin-left: 20px;">Déconnexion</a>
-        </div>
+        <nav class="navbar">
+            <a class="logo" href="#home"><img src="assets/img/logo_2.png" alt="Logo" class="logo-img"></a>
+            <ul class="nav-links">
+                <li class="nav-item"><a href="index.php" class="nav-link">admin</a></li>
+                <li class="nav-item"><a href="#table_des_rapports" class="nav-link">Les Tables de Données</a></li>
+            </ul>
+        </nav>
     </header>
+    
+    <style>
+        
+    </style>
     <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -82,7 +125,23 @@
     
 </head>
 <body>
-
+    <button id="filterButton" style="background-color: #4CAF50; color: white; padding: 10px 15px; border: none; border-radius: 5px; cursor: pointer;">Filtrer par date</button>
+    <div id="filterDates" style="display: none;">
+        <label for="startDate">Date de début:</label>
+        <input type="date" id="startDate" name="startDate">
+        <label for="endDate">Date de fin:</label>
+        <input type="date" id="endDate" name="endDate">
+        <button id="applyFilter" style="background-color: #4CAF50; color: white; padding: 10px 15px; border: none; border-radius: 5px; cursor: pointer;">Appliquer</button>
+    </div>
+    <script>
+        document.getElementById('filterButton').addEventListener('click', function() {
+            document.getElementById('filterDates').style.display = 'block';
+        });
+        document.getElementById('applyFilter').addEventListener('click', function() {
+            // Apply filter logic here
+            document.getElementById('filterDates').style.display = 'none';
+        });
+    </script>
     <h2>Dashboard des Balances</h2>
     <div class="dashboard">
         <div class="dashboard-item">
@@ -239,10 +298,47 @@
         <p>Total des Entrées: €1000.00</p>
         <p>Bénéfice Général: €500.00</p>
     </div>
+    <footer>
+        <div class="footer-content">
+            <style>
+                .footer-content {
+                    background-color: #e7e5e5;
+                    padding: 10px 0;
+                    text-align: center;
+                    color: #000000;
+                }
+                .footer-content .logo {
+                    width: 100px;
+                    height: auto;
+                    margin-bottom: 20px;
+                }
+                .footer-content p {
+                    margin-bottom: 20px;
+                }
+                .footer-content .social-links {
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                }
+                .footer-content .social-links a {
+                    margin: 0 10px;
+                    color: #333;
+                    transition: color 0.3s ease;
+                }
+                .footer-content .social-links a:hover {
+                    color: #57a3f3;
+                }
+            </style>
+            <img src="assets/img/logo_2.png" alt="Company Logo" class="logo">
+            <p>&copy; 2024 Chife Hotel. All rights reserved.</p>
+            <div class="social-links">
+                <a href="https://www.facebook.com/" target="_blank"><i class="fab fa-facebook-f"></i></a>
+                <a href="https://www.twitter.com/" target="_blank"><i class="fab fa-twitter"></i></a>
+                <a href="https://www.instagram.com/" target="_blank"><i class="fab fa-instagram"></i></a>
+                <a href="https://www.linkedin.com/" target="_blank"><i class="fab fa-linkedin-in"></i></a>
+            </div>
+        </div>
+    </footer>
 
-</body>
-</html>
-
-    
 </body>
 </html>
