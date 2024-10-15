@@ -250,7 +250,14 @@ if (!isset($_SESSION['role']) || !in_array($_SESSION['role'], $roles_autorises))
             <input type="number" id="quantity" name="quantity" required><br>
 
             <label for="stock_location">Emplacement du stock:</label>
-            <input type="text" id="stock_location" name="stock_location" required><br>
+            <select id="stock_location" name="stock_location" required>
+                <option value="lundry">Lundry</option>
+                <option value="stock">Stock</option>
+                <option value="reception">Reception</option>
+                <option value="caisse">Caisse</option>
+                <option value="bar">Bar</option>
+            </select><br>
+
 
             <button type="submit">Enregistrer l'entrée de stock</button>
         </form>
@@ -308,7 +315,13 @@ if (!isset($_SESSION['role']) || !in_array($_SESSION['role'], $roles_autorises))
             <input type="number" id="quantity" name="quantity" required><br>
 
             <label for="stock_location">Emplacement du stock:</label>
-            <input type="text" id="stock_location" name="stock_location" required><br>
+            <select id="stock_location" name="stock_location" required>
+                <option value="lundry">Lundry</option>
+                <option value="stock">Stock</option>
+                <option value="reception">Reception</option>
+                <option value="caisse">Caisse</option>
+                <option value="bar">Bar</option>
+            </select><br>
 
             <label for="date_sortie">Date de sortie:</label>
             <input type="date" id="date_sortie" name="date_sortie" required><br>
