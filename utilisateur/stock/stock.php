@@ -337,6 +337,10 @@ if (!isset($_SESSION['role']) || !in_array($_SESSION['role'], $roles_autorises))
         }
     }
 
+    function printPDF(dateDebut, dateFin) {
+        window.open('generate_pdf.php?date_debut=' + dateDebut + '&date_fin=' + dateFin, '_blank');
+    }
+
     document.getElementById('searchForm').addEventListener('submit', function(e) {
         e.preventDefault();
         

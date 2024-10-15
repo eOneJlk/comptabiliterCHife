@@ -28,6 +28,9 @@ if (isset($_GET['date_debut']) && isset($_GET['date_fin'])) {
                   </tr>";
         }
         echo "</table>";
+        
+        // Ajout du bouton d'impression
+        echo "<button onclick='printPDF(\"$date_debut\", \"$date_fin\")'>Imprimer PDF</button>";
     } else {
         echo "Aucun produit trouvé pour cette période.";
     }
@@ -38,3 +41,9 @@ if (isset($_GET['date_debut']) && isset($_GET['date_fin'])) {
     echo "Veuillez spécifier une date de début et une date de fin.";
 }
 ?>
+
+<script>
+function printPDF(dateDebut, dateFin) {
+    window.open('generate_pdf.php?date_debut=' + dateDebut + '&date_fin=' + dateFin, '_blank');
+}
+</script>
