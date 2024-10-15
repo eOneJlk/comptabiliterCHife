@@ -178,6 +178,8 @@ if (!isset($_SESSION['role']) || !in_array($_SESSION['role'], $roles_autorises))
             <th>Nom du produit</th>
             <th>Quantité</th>
             <th>Emplacement du stock</th>
+            <th>Action</th>
+            <th>Dernière modification</th>
         </tr>
     </thead>
     <tbody>
@@ -186,13 +188,16 @@ if (!isset($_SESSION['role']) || !in_array($_SESSION['role'], $roles_autorises))
         include('../../dbconnexion.php');
 
         // Requête pour récupérer les produits en stock
-        $sql = "SELECT * FROM produits WHERE quantite > 0";
+        $sql = "SELECT p.*, CONCAT(a.nom, ' ', a.prenom) AS nom_modificateur 
+                FROM produits p 
+                LEFT JOIN agents a ON p.id_modificateur = a.id 
+                WHERE p.quantite > 0 AND p.date_suppression IS NULL";
 
         // Ajouter la condition de date si les paramètres sont présents
         if (isset($_GET['date_debut']) && isset($_GET['date_fin'])) {
             $date_debut = $_GET['date_debut'];
             $date_fin = $_GET['date_fin'];
-            $sql .= " AND date_entree BETWEEN '$date_debut' AND '$date_fin'";
+            $sql .= " AND p.date_entree BETWEEN '$date_debut' AND '$date_fin'";
         }
 
         $result = $conn->query($sql);
@@ -206,10 +211,18 @@ if (!isset($_SESSION['role']) || !in_array($_SESSION['role'], $roles_autorises))
                 echo "<td>" . $row['nom_produit'] . "</td>";
                 echo "<td>" . $row['quantite'] . "</td>";
                 echo "<td>" . $row['emplacement_stock'] . "</td>";
+                echo "<td>
+                        <button onclick='openModifyModal(" . $row['id'] . ")'>Modifier</button>
+                      </td>";
+                if ($row['date_modification'] === null) {
+                    echo "<td><span style='background-color: yellow;'>Aucune modification</span></td>";
+                } else {
+                    echo "<td>" . $row['date_modification'] . " par " . $row['nom_modificateur'] . "</td>";
+                }
                 echo "</tr>";
             }
         } else {
-            echo "<tr><td colspan='4'>Aucun produit en stock</td></tr>";
+            echo "<tr><td colspan='6'>Aucun produit en stock</td></tr>";
         }
 
         // Fermer la connexion
@@ -217,6 +230,9 @@ if (!isset($_SESSION['role']) || !in_array($_SESSION['role'], $roles_autorises))
         ?>
     </tbody>
 </table>
+
+<script>
+</script>
 
 <!-- Modale du formulaire d'enregistrement de produit -->
 <div id="productModal" class="modal">
@@ -303,6 +319,58 @@ if (!isset($_SESSION['role']) || !in_array($_SESSION['role'], $roles_autorises))
 </div>
 
 <script>
+    
+function openModifyModal(productId) {
+    // Créer une nouvelle modal pour la modification
+    var modal = document.createElement('div');
+    modal.className = 'modal';
+    modal.innerHTML = `
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Modifier le produit</h2>
+            <form id="modifyProductForm">
+                <input type="hidden" name="product_id" value="${productId}">
+                <label for="new_quantity">Nouvelle quantité :</label>
+                <input type="number" id="new_quantity" name="new_quantity" required>
+                <button type="submit">Enregistrer les modifications</button>
+            </form>
+        </div>
+    `;
+    
+    document.body.appendChild(modal);
+    modal.style.display = 'block';
+
+    // Fermer la modal
+    modal.querySelector('.close').onclick = function() {
+        modal.style.display = 'none';
+    }
+
+    // Gérer la soumission du formulaire
+    modal.querySelector('#modifyProductForm').onsubmit = function(e) {
+        e.preventDefault();
+        var formData = new FormData(this);
+        
+        fetch('modify_product.php', {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+            if(data.success) {
+                alert('Produit modifié avec succès');
+                location.reload(); // Recharger la page pour afficher les changements
+            } else {
+                alert('Erreur lors de la modification du produit');
+            }
+            modal.style.display = 'none';
+        })
+        .catch(error => {
+            console.error('Erreur:', error);
+            alert('Une erreur est survenue');
+        });
+    }
+}
+
     // Get the modals
     var reportModal = document.getElementById("reportModal");
     var productModal = document.getElementById("productModal");
