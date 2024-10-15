@@ -8,150 +8,237 @@ include '../../dbconnexion.php';
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Caissier</title>
     <link rel="stylesheet" href="assets/css/style_utilisateur.css">
+    <link rel="stylesheet" href="assets/css/style_modal.css">
 </head>
 <body>
     <header>
-    <nav>
-      <a class="logo" href="#home"><img src="assets/img/logo_2.png" alt="Logo" style="width: 100px; height: 100px; border-radius: 20px; margin: 10px;"></a>
-        <ul class="nav-links" style="display: flex; justify-content: space-between; align-items: center; padding: 0; margin: 0;">
-          <li style="text-align: center; font-family: Arial, sans-serif; color: #333; font-size: 36px; margin-top: 50px;">
-            Formulaire de Caisse</li>
-    </nav>
-  </header>
-  <style>
-    /* Styles pour les modals */
-    .modal {
-        display: none;
-        position: fixed;
-        z-index: 1;
-        padding-top: 100px;
-        left: 0;
-        top: 0;
-        width: 100%;
-        height: 100%;
-        overflow: auto;
-        background-color: rgba(0,0,0,0.4);
-    }
-    .modal-content {
-        background-color: white;
-        margin: auto;
-        padding: 20px;
-        border: 1px solid #888;
-        width: 50%;
-    }
-    .close {
-        color: #aaa;
-        float: right;
-        font-size: 28px;
-        font-weight: bold;
-    }
-    .close:hover,
-    .close:focus {
-        color: black;
-        text-decoration: none;
-        cursor: pointer;
-    }
-</style>
-</head>
-<body>
+        <nav>
+            <a class="logo" href="#home">
+                <img src="assets/img/logo_2.png" alt="Logo" style="width: 100px; height: 100px; border-radius: 20px; margin: 10px;">
+            </a>
+            <ul class="nav-links" style="display: flex; justify-content: space-between; align-items: center; padding: 0; margin: 0;">
+                <li style="text-align: center; font-family: Arial, sans-serif; color: #333; font-size: 36px; margin-top: 50px;">
+                    Formulaire de Caisse
+                </li>
+            </ul>
+        </nav>
+    </header>
 
-<h2>Mouvement De Caisse Par Compte</h2>
-<button id="openCaisseBtn">Ajouter Mouvement Caisse</button>
+    <main>
+        <section style="display: flex; justify-content: space-around; align-items: center;">
+            <div>
+                <h2>Mouvement De Caisse Par Compte</h2>
+                <button id="openCaisseBtn">Ajouter Mouvement Caisse</button>
+            </div>
 
-<h2>Enregistrer une transaction</h2>
-<button id="openTransactionBtn">Enregistrer Transaction</button>
+            <div>
+                <h2>Enregistrer une transaction</h2>
+                <button id="openTransactionBtn">Enregistrer Transaction</button>
+            </div>
 
-<h2>Enregistrer une dépense</h2>
-<button id="openDepenseBtn">Enregistrer Dépense</button>
+            <div>
+                <h2>Enregistrer une dépense</h2>
+                <button id="openDepenseBtn">Enregistrer Dépense</button>
+            </div>
+        </section>
 
-<!-- Modals pour les formulaires -->
-<div id="caisseModal" class="modal">
-    <div class="modal-content">
-        <span class="close" id="closeCaisseModal">&times;</span>
-        <form action="submit_caisse_transaction.php" method="post">
-            <h2>Mouvement De Caisse Par Compte</h2>
-            <label for="date">Date:</label>
-            <input type="date" id="date" name="date" required><br>
+        <!-- Modals pour les formulaires -->
+        <div id="caisseModal" class="modal">
+            <div class="modal-content">
+                <span class="close" id="closeCaisseModal">&times;</span>
+                <form action="submit_caisse_transaction.php" method="post">
+                    <h2>Mouvement De Caisse Par Compte</h2>
+                    <label for="date">Date:</label>
+                    <input type="date" id="date" name="date" required><br>
 
-            <label for="type">Type de transaction:</label>
-            <select id="type" name="type" required>
-                <option value="entree">Entrée</option>
-                <option value="sortie">Sortie</option>
-            </select><br>
+                    <label for="type">Type de transaction:</label>
+                    <select id="type" name="type" required>
+                        <option value="entree">Entrée</option>
+                        <option value="sortie">Sortie</option>
+                    </select><br>
 
-            <label for="montant">Montant:</label>
-            <input type="number" id="montant" name="montant" step="0.01" required><br>
+                    <label for="montant">Montant:</label>
+                    <input type="number" id="montant" name="montant" step="0.01" required><br>
 
-            <label for="details">Détails:</label>
-            <textarea id="details" name="details" rows="4" cols="50" required></textarea><br>
+                    <label for="details">Détails:</label>
+                    <textarea id="details" name="details" rows="4" cols="50" required></textarea><br>
 
-            <label for="compte">Compte:</label>
-            <select id="compte" name="compte" required>
-                <option value="DG">DG</option>
-                <option value="PDG">PDG</option>
-                <option value="Gerant">Gerant</option>
-                <option value="autre">Autre</option>
-            </select><br>
+                    <label for="compte">Compte:</label>
+                    <select id="compte" name="compte" required>
+                        <option value="DG">DG</option>
+                        <option value="PDG">PDG</option>
+                        <option value="Gerant">Gerant</option>
+                        <option value="autre">Autre</option>
+                    </select><br>
 
-            <button type="submit">Soumettre</button>
-        </form>
-    </div>
-</div>
+                    <button type="submit">Soumettre</button>
+                </form>
+            </div>
+        </div>
 
-<div id="transactionModal" class="modal">
-    <div class="modal-content">
-        <span class="close" id="closeTransactionModal">&times;</span>
-        <form action="submit_Bak_Movement.php" method="post">
-            <h2>Enregistrer une transaction</h2>
-            <label for="transaction_type">Type de transaction:</label>
-            <select id="transaction_type" name="transaction_type" required>
-                <option value="deposit">Dépôt</option>
-                <option value="withdrawal">Retrait</option>
-            </select><br>
+        <div id="transactionModal" class="modal">
+            <div class="modal-content">
+                <span class="close" id="closeTransactionModal">&times;</span>
+                <form action="submit_Bak_Movement.php" method="POST">
+                    <h2>Ajouter une Transaction Bancaire</h2>
+                    <label for="transaction_type">Type de Transaction:</label>
+                    <select id="transaction_type" name="transaction_type" required>
+                        <option value="deposit">Dépôt</option>
+                        <option value="withdrawal">Retrait</option>
+                    </select><br><br>
 
-            <label for="amount">Montant:</label>
-            <input type="number" id="amount" name="amount" step="0.01" required><br>
+                    <label for="amount">Montant:</label>
+                    <input type="number" id="amount" name="amount" step="0.01" required><br><br>
 
-            <label for="date">Date de transaction:</label>
-            <input type="date" id="date" name="date" required><br>
+                    <label for="date">Date:</label>
+                    <input type="date" id="date" name="date" required><br><br>
 
-            <label for="invoice_number">Numéro de facture:</label>
-            <input type="text" id="invoice_number" name="invoice_number" required><br>
+                    <label for="invoice_number">Numéro de Facture:</label>
+                    <input type="text" id="invoice_number" name="invoice_number" required><br><br>
 
-            <label for="slip_number">Numéro du bordereau:</label>
-            <input type="text" id="slip_number" name="slip_number" required><br>
+                    <label for="slip_number">Numéro de Bordereau:</label>
+                    <input type="text" id="slip_number" name="slip_number" required><br><br>
 
-            <button type="submit">Soumettre</button>
-            <button type="reset">Annuler</button>
-        </form>
-    </div>
-</div>
+                    <input type="submit" value="Ajouter la Transaction">
+                </form>
+            </div>
+        </div>
 
-<div id="depenseModal" class="modal">
-    <div class="modal-content">
-        <span class="close" id="closeDepenseModal">&times;</span>
-        <form action="submit_expense.php" method="post">
-            <h2>Enregistrer une dépense</h2>
-            <label for="date">Date:</label>
-            <input type="date" id="date" name="date" required><br>
+        <div id="depenseModal" class="modal">
+            <div class="modal-content">
+                <span class="close" id="closeDepenseModal">&times;</span>
+                <form action="submit_expense.php" method="POST">
+                    <h2>Ajouter une Dépense</h2>
+                    <label for="date">Date:</label>
+                    <input type="date" id="date" name="date" required><br><br>
 
-            <label for="nom">Nom:</label>
-            <input type="text" id="nom" name="nom" required><br>
+                    <label for="nom">Nom:</label>
+                    <input type="text" id="nom" name="nom" required><br><br>
 
-            <label for="description">Description:</label>
-            <textarea id="description" name="description" rows="4" cols="50" required></textarea><br>
+                    <label for="description">Description:</label>
+                    <textarea id="description" name="description" required></textarea><br><br>
 
-            <label for="amount">Montant dépensé:</label>
-            <input type="number" id="amount" name="amount" step="0.01" required><br>
+                    <label for="amount">Montant:</label>
+                    <input type="number" id="amount" name="amount" step="0.01" required><br><br>
 
-            <button type="submit">Enregistrer la dépense</button>
-        </form>
-    </div>
-</div>
+                    <input type="submit" value="Ajouter la Dépense">
+                </form>
+            </div>
+        </div>
 
-<script>
-    // Get the modals
-    var caisseModal = document.getElementById("caisseModal");
+        <!-- Tableaux -->
+        <section>
+            <h2>Tableaux De Caisse par Compte</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Type de transaction</th>
+                        <th>Montant</th>
+                        <th>Détails</th>
+                        <th>Compte</th>
+                    </tr>
+                </thead>
+                <tbody>
+                <?php
+                $sql = "SELECT date, type, montant, details, compte FROM transactions_caisse ORDER BY date DESC";
+                $result = $conn->query($sql);
+
+                if ($result->num_rows > 0) {
+                    while($row = $result->fetch_assoc()) {
+                        echo "<tr>";
+                        echo "<td>" . $row["date"] . "</td>";
+                        echo "<td>" . $row["type"] . "</td>";
+                        echo "<td>" . $row["montant"] . "</td>";
+                        echo "<td>" . $row["details"] . "</td>";
+                        echo "<td>" . $row["compte"] . "</td>";
+                        echo "</tr>";
+                    }
+                } else {
+                    echo "<tr><td colspan='5'>Aucune transaction trouvée</td></tr>";
+                }
+                ?>
+                </tbody>
+            </table>
+        </section>
+
+        <section>
+            <h2>Liste des Transactions Bancaires</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Type de Transaction</th>
+                        <th>Montant</th>
+                        <th>Date</th>
+                        <th>Numéro de Facture</th>
+                        <th>Numéro de Bordereau</th>
+                        <th>Date de Création</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php
+                    $sql = "SELECT * FROM transactions_bancaires ORDER BY date DESC";
+                    $result = $conn->query($sql);
+
+                    if ($result->num_rows > 0) {
+                        while($row = $result->fetch_assoc()) {
+                            echo "<tr>";
+                            echo "<td>" . $row["id"] . "</td>";
+                            echo "<td>" . $row["transaction_type"] . "</td>";
+                            echo "<td>" . $row["amount"] . "</td>";
+                            echo "<td>" . $row["date"] . "</td>";
+                            echo "<td>" . $row["invoice_number"] . "</td>";
+                            echo "<td>" . $row["slip_number"] . "</td>";
+                            echo "<td>" . $row["created_at"] . "</td>";
+                            echo "</tr>";
+                        }
+                    } else {
+                        echo "<tr><td colspan='7'>Aucune transaction bancaire trouvée</td></tr>";
+                    }
+                    ?>
+                </tbody>
+            </table>
+        </section>
+
+        <section>
+            <h2>Liste des Dépenses</h2>
+            <?php
+            $sql = "SELECT * FROM depenses";
+            $result = $conn->query($sql);
+
+            if ($result->num_rows > 0) {
+                echo "<table border='1'>
+                        <tr>
+                            <th>ID</th>
+                            <th>Date</th>
+                            <th>Nom</th>
+                            <th>Description</th>
+                            <th>Montant</th>
+                            <th>Date de Création</th>
+                        </tr>";
+                
+                while($row = $result->fetch_assoc()) {
+                    echo "<tr>
+                            <td>" . $row["id"] . "</td>
+                            <td>" . $row["date"] . "</td>
+                            <td>" . $row["nom"] . "</td>
+                            <td>" . $row["description"] . "</td>
+                            <td>" . $row["amount"] . "</td>
+                            <td>" . $row["created_at"] . "</td>";
+                    echo "</tr>";
+                }
+                echo "</table>";
+            } else {
+                echo "Aucune dépense trouvée.";
+            }
+            ?>
+        </section>
+
+    </main>
+  <script>
+       // Get the modals
+       var caisseModal = document.getElementById("caisseModal");
     var transactionModal = document.getElementById("transactionModal");
     var depenseModal = document.getElementById("depenseModal");
 
@@ -201,105 +288,6 @@ include '../../dbconnexion.php';
             depenseModal.style.display = "none";
         }
     }
-</script>
-
-
-    <style>
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-bottom: 20px;
-        }
-        table, th, td {
-            border: 1px solid #ccc;
-        }
-        th, td {
-            padding: 10px;
-            text-align: left;
-        }
-        th {
-            background-color: #f8f8f8;
-        }
-    </style>
-    <table>
-        <thead>
-            <h2>Tableaux De Caisse par Compte</h2>
-            <tr>
-                <th>Date</th>
-                <th>Type de transaction</th>
-                <th>Montant</th>
-                <th>Détails</th>
-                <th>Compte</th>
-            </tr>
-        </thead>
-        <tbody>
-        <?php
-$sql = "SELECT date, type, montant, details, compte FROM transactions_caisse ORDER BY date DESC";
-$result = $conn->query($sql);
-
-if ($result->num_rows > 0) {
-    while($row = $result->fetch_assoc()) {
-        echo "<tr>";
-        echo "<td>" . $row["date"] . "</td>";
-        echo "<td>" . $row["type"] . "</td>";
-        echo "<td>" . $row["montant"] . "</td>";
-        echo "<td>" . $row["details"] . "</td>";
-        echo "<td>" . $row["compte"] . "</td>";
-        echo "</tr>";
-    }
-} else {
-    echo "<tr><td colspan='5'>Aucune transaction trouvée</td></tr>";
-}
-?>
-        </tbody>
-    </table>
-      
-  <footer>
-    <div class="footer-content">
-      <style>
-                .footer-content {
-                    background-color: #e7e5e5;
-                    padding: 10px 0;
-                    text-align: center;
-                    color: #000000;
-                    position: fixed;
-                    bottom: 0;
-                    width: 100%;
-                }
-                .footer-content .logo {
-                    width: 100px;
-                    height: auto;
-                    margin-bottom: 20px;
-                }
-                .footer-content p {
-                    margin-bottom: 20px;
-                }
-                .footer-content .social-links {
-                    display: flex;
-                    justify-content: center;
-                    align-items: center;
-                }
-                .footer-content .social-links a {
-                    margin: 0 10px;
-                    color: #333;
-                    transition: color 0.3s ease;
-                }
-                .footer-content .social-links a:hover {
-                    color: #57a3f3;
-                }
-      </style>
-        <img src="assets/img/logo_2.png" alt="Company Logo" class="logo">
-          <p>&copy; 2024 Chife Hotel. All rights reserved.</p>
-            <div class="social-links">
-              <a href="https://www.facebook.com/" target="_blank"><i class="fab fa-facebook-f"></i></a>
-              <a href="https://www.twitter.com/" target="_blank"><i class="fab fa-twitter"></i></a>
-              <a href="https://www.instagram.com/" target="_blank"><i class="fab fa-instagram"></i></a>
-              <a href="https://www.linkedin.com/" target="_blank"><i class="fab fa-linkedin-in"></i></a>
-            </div>
-        </div>
-  </footer>
-
-  <script>
     // Récupérer les éléments du DOM
     const openFormBtn = document.getElementById('open-form-btn');
     const popupForm = document.getElementById('popup-form');

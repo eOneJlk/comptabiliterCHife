@@ -15,11 +15,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $stmt->bind_param("ssdss", $date, $type, $montant, $details, $compte);
 
     if ($stmt->execute()) {
-        echo "<script>
-            alert('Transaction enregistrée avec succès!');
-            window.location.href = 'caisse.php';
-        </script>";
-        header("refresh:3;url=caisse.php");
+        echo "Transaction enregistrée avec succès.";
+        header("location:caisse.php");
+        exit();
     } else {
         echo "Erreur: " . $stmt->error;
     }
