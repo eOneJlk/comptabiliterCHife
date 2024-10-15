@@ -25,7 +25,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $stmt->bind_result($id, $db_email, $db_mot_de_passe, $role);
             $stmt->fetch();
 
-            if (password_verify(password: $mot_de_passe, $db_mot_de_passe)) {
+            if (password_verify($mot_de_passe, $db_mot_de_passe)) {
                 // Si le mot de passe est correct, démarrer une session
                 session_start();
                 $_SESSION['agent_id'] = $id;
@@ -52,13 +52,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
 $conn->close();
 ?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Chife Hotel Login</title>
-    <link rel="stylesheet" href="assets/css/style_utilisateur.css">
+    <link rel="stylesheet" href="assets/css/style_login.css">
 </head>
 <body>
 <div class="login-container">
@@ -68,16 +69,16 @@ $conn->close();
     <?php if (isset($error_message)): ?>
         <div class="error-message"><?php echo $error_message; ?></div>
     <?php endif; ?>
-    <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="post">
-        <div class="form-group">
-            <label for="email">Email</label>
-            <input type="email" id="email" name="email" required>
+    <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="post" style="background-color: #f9f9f9; padding: 20px; border-radius: 5px; max-width: 400px; margin: 20px auto; box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);">
+        <div class="form-group" style="margin-bottom: 20px;">
+            <label for="email" style="font-weight: bold; display: block; margin-bottom: 8px;">Email</label>
+            <input type="email" id="email" name="email" required style="width: 100%; padding: 8px; margin-bottom: 10px; border: 1px solid #ddd; border-radius: 4px;">
         </div>
-        <div class="form-group">
-            <label for="mot_de_passe">Mot de passe</label>
-            <input type="password" id="mot_de_passe" name="mot_de_passe" required>
+        <div class="form-group" style="margin-bottom: 20px;">
+            <label for="mot_de_passe" style="font-weight: bold; display: block; margin-bottom: 8px;">Mot de passe</label>
+            <input type="password" id="mot_de_passe" name="mot_de_passe" required style="width: 100%; padding: 8px; margin-bottom: 10px; border: 1px solid #ddd; border-radius: 4px;">
         </div>
-        <button type="submit">Se connecter</button>
+        <button type="submit" style="background-color: #4CAF50; color: white; padding: 10px; border: none; border-radius: 4px; cursor: pointer;">Se connecter</button>
     </form>
     <footer>
         <div class="footer">

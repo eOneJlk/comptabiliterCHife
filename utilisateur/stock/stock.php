@@ -37,6 +37,17 @@ if (!isset($_SESSION['role']) || !in_array($_SESSION['role'], $roles_autorises))
         </ul>
   </nav>
     </header>
+    <div class="search-bar" style="margin: 20px 0; text-align: center;">
+        <form action="" method="GET" style="display: inline-block;">
+            <label for="date_debut">Date de début:</label>
+            <input type="date" id="date_debut" name="date_debut" required style="margin-right: 10px;">
+            
+            <label for="date_fin">Date de fin:</label>
+            <input type="date" id="date_fin" name="date_fin" required style="margin-right: 10px;">
+            
+            <button type="submit" style="padding: 5px 10px; background-color: #4CAF50; color: white; border: none; cursor: pointer;">Rechercher</button>
+        </form>
+    </div>
     <h1 style="text-align: center; font-size: 2rem; color: #333; margin-top: 50px; background-color: #f9f9f9;">Formulaire de Stock</h1>
     <form action="submit_report.php" method="post">
         <h2>From de Rapport</h2>

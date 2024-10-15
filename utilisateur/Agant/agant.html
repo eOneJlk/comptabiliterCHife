@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agant Rapport</title>
+    <link rel="stylesheet" href="assets/style_agant.css">
+</head>
+<body>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f7fc;
+        }
+
+        header {
+            background-color: #ffffff;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+            width: 100px; 
+            height: 100px; 
+            border-radius: 20px; 
+            margin: 10px;
+        }
+
+        .nav-links {
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            padding: 0;
+            margin: 0;
+        }
+
+        .nav-links li {
+            list-style-type: none;
+            margin: 10px;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: #333;
+            font-weight: bold;
+        }
+
+        form {
+            max-width: 800px;
+            margin: auto;
+            padding: 20px;
+            background-color: #ffffff;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            border-radius: 8px;
+        }
+
+        form h2 {
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        form label {
+            display: block;
+            margin-bottom: 10px;
+        }
+        form {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            margin: 20px;
+            background-color: #f9f9f9;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        form h2 {
+            color: #333;
+            margin-bottom: 20px;
+            font-weight: bold;
+        }
+
+        form label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+
+        form input, form textarea, form select {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 20px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 16px;
+        }
+
+        form button[type="submit"] {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+        }
+
+        form button[type="submit"]:hover {
+            background-color: #45a049;
+        }
+
+        form input, form textarea, form select {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 20px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        form button[type="submit"] {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 20px;
+            cursor: pointer;
+        }
+
+        form button[type="submit"]:hover {
+            background-color: #45a049;
+        }
+    </style>
+    <header>
+        <nav>
+          <a class="logo" href="#home"><img src="assets/img/logo_2.png" alt="Logo" style="width: 100px; height: 100px; border-radius: 20px; margin: 10px;"></a>
+            <ul class="nav-links" style="display: flex; justify-content: space-between; align-items: center; padding: 0; margin: 0;">
+              <li style="list-style-type: none; margin: 10px;"><a href="#home" style="text-decoration: none; color: #333; font-weight: bold;">Accueil</a></li>
+              <li style="list-style-type: none; margin: 10px;"><a href="#dashboard.html" style="text-decoration: none; color: #333; font-weight: bold;">Dashboard</a></li>
+              <li style="list-style-type: none; margin: 10px;"><a href="#rapports-et-statistiques" style="text-decoration: none; color: #333; font-weight: bold;">Statistiques</a></li>
+            </ul>
+        </nav>
+      </header>
+<form action="submit_journal_entry.php" method="post">
+    <h2>Formulaire d'Entrée du Journal de Caisse</h2>
+    <label for="date">Date:</label>
+    <input type="date" id="date" name="date" required><br>
+
+    <label for="nom">Nom:</label>
+    <input type="text" id="nom" name="nom" required><br>
+
+    <label for="nombre_check_out">Nombre des Check Out:</label>
+    <input type="number" id="nombre_check_out" name="nombre_check_out" required><br>
+
+    <label for="nombre_check_in">Nombre de Check In:</label>
+    <input type="number" id="nombre_check_in" name="nombre_check_in" required><br>
+
+    <label for="chambre_disponible">Chambre Disponible:</label>
+    <input type="number" id="chambre_disponible" name="chambre_disponible" required><br>
+
+    <label for="contenu">Contenu:</label>
+    <textarea id="contenu" name="contenu" rows="4" cols="50" required></textarea><br>
+
+    <label for="entree_cash">Entrée Cash:</label>
+    <input type="number" id="entree_cash" name="entree_cash" step="0.01" required><br>
+
+    <label for="Credit">Credit:</label>
+    <input type="number" id="entree_cash" name="entree_cash" step="0.01" required><br>
+
+    <label for="entree_airtel_money">Entrée Airtel Money:</label>
+    <input type="number" id="entree_airtel_money" name="entree_airtel_money" step="0.01" required><br>
+
+    <label for="entree_carte_pos">Entrée Carte POS:</label>
+    <input type="number" id="entree_carte_pos" name="entree_carte_pos" step="0.01" required><br>
+
+    <button type="submit">Soumettre</button>
+</form>
+</body>
+</html>
