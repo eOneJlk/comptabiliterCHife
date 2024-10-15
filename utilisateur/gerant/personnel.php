@@ -72,7 +72,7 @@ if (!isset($_SESSION['agent_id'])) {
             </a>
             <ul class="nav-links" style="display: flex; justify-content: space-between; align-items: center; padding: 0; margin: 0;">
                 <li style="list-style-type: none; margin: 10px;">
-                    <a href="#enrgistrement_des_agants" style="text-decoration: none; color: #333; font-weight: bold;">Ajouter un agent</a>
+                    <a href="create_agent.php" style="text-decoration: none; color: #333; font-weight: bold;">Ajouter un agent</a>
                 </li>
                 <li style="list-style-type: none; margin: 10px;">
                     <a href="#fiche_des_agants" style="text-decoration: none; color: #333; font-weight: bold;">Fiche des Agents</a>
