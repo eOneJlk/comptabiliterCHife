@@ -34,7 +34,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
                 // Rediriger selon le rôle
                 if ($role === 'admin') {
-                    header("Location: /utilisateur/admin/admin.html");
+                    header("Location: index.php");
                 } else {
                     header("Location: index.php");
                 }
