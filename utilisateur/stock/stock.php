@@ -10,6 +10,24 @@ if (!isset($_SESSION['agent_id'])) {
     exit();
 }
 
+// Afficher les messages de session s'ils existent
+if (isset($_SESSION['message'])) {
+    echo "<div class='" . $_SESSION['message_type'] . "'>" . $_SESSION['message'] . "</div>";
+    unset($_SESSION['message']);
+    unset($_SESSION['message_type']);
+}
+
+// Synchroniser les données du stock
+$sql = "SELECT * FROM produits WHERE date_modification > DATE_SUB(NOW(), INTERVAL 1 DAY)";
+$result = $conn->query($sql);
+
+if ($result->num_rows > 0) {
+    while($row = $result->fetch_assoc()) {
+        // Mettre à jour les données locales avec les données de la base de données
+        // Ceci est un exemple, vous devrez adapter cette partie selon votre structure de données locale
+        $_SESSION['stock'][$row['id']] = $row;
+    }
+}
 // Vérifier le rôle de l'utilisateur
 $roles_autorises = ['admin']; // Ajoutez ou retirez des rôles selon vos besoins
 if (!isset($_SESSION['role']) || !in_array($_SESSION['role'], $roles_autorises)) {
@@ -120,8 +138,8 @@ if (!isset($_SESSION['role']) || !in_array($_SESSION['role'], $roles_autorises))
 <div id="reportModal" class="modal">
     <div class="modal-content">
         <span class="close" id="closeReportModal">&times;</span>
-        <form action="submit_report.php" method="post">
-            <h2>Formulaire de Rapport</h2>
+        <form action="generate_report.php" method="post">
+            <h2>Générer un Rapport</h2>
             <label for="date">Date:</label>
             <input type="date" id="date" name="date" required><br>
 
@@ -142,10 +160,10 @@ if (!isset($_SESSION['role']) || !in_array($_SESSION['role'], $roles_autorises))
                 <option value="caisse">Caisse</option>
             </select><br>
 
-            <label for="details">Détails:</label>
-            <textarea id="details" name="details" rows="4" cols="50" required></textarea><br>
+            <label for="produit">Produit (optionnel):</label>
+            <input type="text" id="produit" name="produit"><br>
 
-            <button type="submit">Soumettre</button>
+            <button type="submit" name="action" value="generate_report">Générer le rapport</button>
         </form>
     </div>
 </div>
