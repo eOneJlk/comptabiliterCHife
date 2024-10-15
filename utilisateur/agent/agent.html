@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Journal de Caisse - Rapport Quotidien</title>
+    <link rel="stylesheet" href="assets/style_agant.css">
+    <style>
+        .info-message {
+            background-color: #e7f3fe;
+            border-left: 6px solid #2196F3;
+            margin-bottom: 15px;
+            padding: 10px;
+            color: #0c5460;
+        }
+    </style>
+</head>
+<body>
+    
+    <header>
+        <nav>
+            <a class="logo" href="#home"><img src="assets/img/logo_2.png" alt="Logo" style="width: 100px; height: 100px; border-radius: 20px; margin: 10px;"></a>
+            <ul class="nav-links" style="display: flex; justify-content: space-between; align-items: center; padding: 0; margin: 0;">
+                <li style="list-style-type: none; margin: 10px;"><a href="#home" style="text-decoration: none; color: #333; font-weight: bold;">Accueil</a></li>
+                <li style="list-style-type: none; margin: 10px;"><a href="#dashboard.html" style="text-decoration: none; color: #333; font-weight: bold;">Dashboard</a></li>
+                <li style="list-style-type: none; margin: 10px;"><a href="#rapports-et-statistiques" style="text-decoration: none; color: #333; font-weight: bold;">Statistiques</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <div class="info-message">
+            <p><strong>Attention :</strong> Ce formulaire ne peut être soumis qu'une seule fois par jour. Assurez-vous que toutes les informations sont correctes avant de soumettre.</p>
+        </div>
+
+        <form action="submit_journal_entry.php" method="post" id="journalForm">
+            <h2>Formulaire d'Entrée du Journal de Caisse</h2>
+            
+            <label for="date">Date:</label>
+            <input type="date" id="date" name="date" required readonly><br>
+
+            <label for="nom">Nom:</label>
+            <input type="text" id="nom" name="nom" required><br>
+
+            <label for="nombre_check_out">Nombre de Check Out:</label>
+            <input type="number" id="nombre_check_out" name="nombre_check_out" required><br>
+
+            <label for="nombre_check_in">Nombre de Check In:</label>
+            <input type="number" id="nombre_check_in" name="nombre_check_in" required><br>
+
+            <label for="chambre_disponible">Chambres Disponibles:</label>
+            <input type="number" id="chambre_disponible" name="chambre_disponible" required><br>
+
+            <label for="contenu">Contenu:</label>
+            <textarea id="contenu" name="contenu" rows="4" cols="50" required></textarea><br>
+
+            <label for="entree_cash">Entrée Cash:</label>
+            <input type="number" id="entree_cash" name="entree_cash" step="0.01" required><br>
+
+            <label for="credit">Crédit:</label>
+            <input type="number" id="credit" name="credit" step="0.01" required><br>
+
+            <label for="entree_airtel_money">Entrée Airtel Money:</label>
+            <input type="number" id="entree_airtel_money" name="entree_airtel_money" step="0.01" required><br>
+
+            <label for="entree_carte_pos">Entrée Carte POS:</label>
+            <input type="number" id="entree_carte_pos" name="entree_carte_pos" step="0.01" required><br>
+
+            <button type="submit">Soumettre le rapport journalier</button>
+        </form>
+    </main>
+
+    <script>
+      // Fonction pour formater la date
+      const formatDate = (date) => {
+          const dd = String(date.getDate()).padStart(2, '0');
+          const mm = String(date.getMonth() + 1).padStart(2, '0');
+          const yyyy = date.getFullYear();
+          return `${yyyy}-${mm}-${dd}`;
+      };
+  
+      // Récupérer la date d'Internet
+      fetch('https://worldtimeapi.org/api/ip')
+          .then(response => response.json())
+          .then(data => {
+              const internetDate = new Date(data.datetime);
+              document.getElementById('date').value = formatDate(internetDate);
+          })
+          .catch(error => {
+              console.error('Erreur lors de la récupération de la date:', error);
+              // En cas d'erreur, utiliser la date locale
+              document.getElementById('date').value = formatDate(new Date());
+          });
+  </script>
+</body>
+</html>
