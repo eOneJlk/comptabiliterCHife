@@ -2,116 +2,55 @@
 session_start();
 require_once '../../dbconnexion.php';
 
-// Vérifier si l'agent est connecté
-if (!isset($_SESSION['agent_id'])) {
-    header("Location: login.php");
+// Vérification du rôle et de l'authentification
+$roles_autorises = ['admin', 'gerant'];
+if (!isset($_SESSION['role']) || !in_array($_SESSION['role'], $roles_autorises)) {
+    header("Location: ../../acces_refuse.php");
     exit();
 }
 
-// Vérifier si le formulaire a été soumis
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $mot_de_passe_actuel = $_POST['mot_de_passe_actuel'];
-    $nouveau_mot_de_passe = $_POST['nouveau_mot_de_passe'];
-    $confirmer_mot_de_passe = $_POST['confirmer_mot_de_passe'];
+    $agent_id = $_POST['agent_id'];
+    $new_password = $_POST['new_password'];
+    $confirm_password = $_POST['confirm_password'];
 
-    // Vérifier si les mots de passe correspondent
-    if ($nouveau_mot_de_passe !== $confirmer_mot_de_passe) {
+    if ($new_password !== $confirm_password) {
         echo "Les mots de passe ne correspondent pas.";
         exit();
     }
 
-    // Récupérer l'ID de l'agent depuis la session
-    $agent_id = $_SESSION['agent_id'];
+    // Hachage du nouveau mot de passe
+    $hashed_password = password_hash($new_password, PASSWORD_DEFAULT);
 
-    // Requête SQL pour récupérer l'ancien mot de passe
-    $sql = "SELECT mot_de_passe FROM agents WHERE id = ?";
-    if ($stmt = $conn->prepare($sql)) {
-        $stmt->bind_param("i", $agent_id);
-        $stmt->execute();
-        $stmt->bind_result($db_mot_de_passe);
-        $stmt->fetch();
+    // Vérification de l'existence de l'agent
+    $check_query = "SELECT id FROM agents WHERE id = ?";
+    $check_stmt = $conn->prepare($check_query);
+    $check_stmt->bind_param("i", $agent_id);
+    $check_stmt->execute();
+    $check_result = $check_stmt->get_result();
 
-        // Vérifier si le mot de passe actuel est correct
-        if (password_verify($mot_de_passe_actuel, $db_mot_de_passe)) {
-            // Hacher le nouveau mot de passe
-            $nouveau_mot_de_passe_hash = password_hash($nouveau_mot_de_passe, PASSWORD_BCRYPT);
-
-            // Mettre à jour le mot de passe dans la base de données
-            $sql_update = "UPDATE agents SET mot_de_passe = ? WHERE id = ?";
-            if ($stmt_update = $conn->prepare($sql_update)) {
-                $stmt_update->bind_param("si", $nouveau_mot_de_passe_hash, $agent_id);
-                if ($stmt_update->execute()) {
-                    echo "Mot de passe changé avec succès!";
-                } else {
-                    echo "Erreur lors de la mise à jour du mot de passe.";
-                }
-                $stmt_update->close();
-            }
-        } else {
-            echo "Le mot de passe actuel est incorrect.";
-        }
-
-        $stmt->close();
+    if ($check_result->num_rows === 0) {
+        echo "Agent non trouvé.";
+        $check_stmt->close();
+        exit();
     }
+    $check_stmt->close();
+
+    // Mise à jour du mot de passe
+    $update_query = "UPDATE agents SET password = ? WHERE id = ?";
+    $update_stmt = $conn->prepare($update_query);
+    $update_stmt->bind_param("si", $hashed_password, $agent_id);
+
+    if ($update_stmt->execute()) {
+        echo "Mot de passe mis à jour avec succès.";
+    } else {
+        echo "Erreur lors de la mise à jour du mot de passe : " . $update_stmt->error;
+    }
+
+    $update_stmt->close();
+} else {
+    echo "Méthode non autorisée.";
 }
 
-// Fermer la connexion
 $conn->close();
 ?>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f0f0f0;
-            margin: 0;
-            padding: 20px;
-        }
-        h1 {
-            text-align: center;
-            color: #333;
-        }
-        form {
-            max-width: 500px;
-            margin: auto;
-            padding: 20px;
-            background-color: #fff;
-            border: 1px solid #ddd;
-            border-radius: 10px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-        }
-        label {
-            display: block;
-            margin-bottom: 10px;
-        }
-        input[type="password"] {
-            width: 100%;
-            padding: 10px;
-            margin-bottom: 20px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-        }
-        button[type="submit"] {
-            width: 100%;
-            padding: 10px;
-            background-color: #4CAF50;
-            color: #fff;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-        }
-        button[type="submit"]:hover {
-            background-color: #45a049;
-        }
-    </style>
-<!-- Formulaire de changement de mot de passe -->
-<form action="change_password.php" method="post">
-    <label for="mot_de_passe_actuel">Mot de passe actuel:</label>
-    <input type="password" id="mot_de_passe_actuel" name="mot_de_passe_actuel" required><br>
-    
-    <label for="nouveau_mot_de_passe">Nouveau mot de passe:</label>
-    <input type="password" id="nouveau_mot_de_passe" name="nouveau_mot_de_passe" required><br>
-    
-    <label for="confirmer_mot_de_passe">Confirmer le nouveau mot de passe:</label>
-    <input type="password" id="confirmer_mot_de_passe" name="confirmer_mot_de_passe" required><br>
-    
-    <button type="submit">Changer le mot de passe</button>
-</form>
