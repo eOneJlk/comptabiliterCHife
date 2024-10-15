@@ -14,13 +14,50 @@
             margin: 0;
             padding: 20px;
         }
+        .logo-image {
+            width: 100px;
+            height: 100px;
+            border-radius: 20px;
+            margin: 10px;
+            transition: transform 0.3s;
+        }
+        .logo-image:hover {
+            transform: scale(1.1);
+        }
+        .nav-links {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0;
+            margin: 0;
+        }
+        .nav-link {
+            text-decoration: none;
+            color: #333;
+            font-weight: bold;
+            margin: auto;
+            padding: 10px 15px;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+        }
+        .nav-link:hover {
+            background-color: #e0e0e0;
+        }
+        .logout-link {
+            margin-left: 20px;
+            color: #d9534f;
+            font-weight: bold;
+        }
         h2 {
             color: #333;
+            border-bottom: 2px solid #4CAF50;
+            padding-bottom: 10px;
         }
         table {
             width: 100%;
             border-collapse: collapse;
             margin-bottom: 20px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
         }
         table, th, td {
             border: 1px solid #ccc;
@@ -30,7 +67,8 @@
             text-align: left;
         }
         th {
-            background-color: #f8f8f8;
+            background-color: #4CAF50;
+            color: white;
         }
         .dashboard {
             display: flex;
@@ -44,12 +82,18 @@
             width: 23%;
             text-align: center;
             border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s;
+        }
+        .dashboard-item:hover {
+            transform: scale(1.05);
         }
         .bilan {
             background-color: #333;
             color: white;
             padding: 15px;
             border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
         }
         .bilan p {
             font-size: 1.2em;
@@ -59,20 +103,23 @@
     <header>
         <div class="user-profile">
           <nav>
-            <a class="logo" href="#home"><img src="assets/img/logo_2.png" alt="Logo" style="place-items:initial; width: 100px; height: 100px; border-radius: 20px; margin: 10px;"></a>
-              <ul class="nav-links" style="display: flex; justify-content: space-between; align-items: center; padding: 0; margin: 0;">
-                <li style="list-style-type: none; margin: 10px;"><a href="#home" style="text-decoration: none; color: #333; font-weight: bold;">Accueil</a></li>
-                <li style="list-style-type: none; margin: 10px;"><a href="#dashboard.html" style="text-decoration: none; color: #333; font-weight: bold;">Dashboard</a></li>
-                <li style="list-style-type: none; margin: 10px;"><a href="#rapports-et-statistiques" style="text-decoration: none; color: #333; font-weight: bold;">Statistiques</a></li>
+            <a class="logo" href="#home"><img src="assets/img/logo_2.png" alt="Logo" class="logo-image"></a>
+              <ul class="nav-links">
+                <li><a href="#home" class="nav-link">Accueil</a></li>
+                <li><a href="#dashboard.html" class="nav-link">Dashboard</a></li>
+                <li><a href="#rapports-et-statistiques" class="nav-link">Statistiques</a></li>
               </ul>
           </nav>
             <?php 
               echo htmlspecialchars($nom_complet); 
             ?>
             </span>
-            <a href="logout.php" class="logout-link" style="margin-left: 20px;">Déconnexion</a>
+            <a href="logout.php" class="logout-link">Déconnexion</a>
         </div>
     </header>
+    <style>
+        
+    </style>
     <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -82,7 +129,23 @@
     
 </head>
 <body>
-
+    <button id="filterButton" style="background-color: #4CAF50; color: white; padding: 10px 15px; border: none; border-radius: 5px; cursor: pointer;">Filtrer par date</button>
+    <div id="filterDates" style="display: none;">
+        <label for="startDate">Date de début:</label>
+        <input type="date" id="startDate" name="startDate">
+        <label for="endDate">Date de fin:</label>
+        <input type="date" id="endDate" name="endDate">
+        <button id="applyFilter" style="background-color: #4CAF50; color: white; padding: 10px 15px; border: none; border-radius: 5px; cursor: pointer;">Appliquer</button>
+    </div>
+    <script>
+        document.getElementById('filterButton').addEventListener('click', function() {
+            document.getElementById('filterDates').style.display = 'block';
+        });
+        document.getElementById('applyFilter').addEventListener('click', function() {
+            // Apply filter logic here
+            document.getElementById('filterDates').style.display = 'none';
+        });
+    </script>
     <h2>Dashboard des Balances</h2>
     <div class="dashboard">
         <div class="dashboard-item">

@@ -81,6 +81,24 @@
               </ul>
         </nav>
     </header>
+
+    <button id="filterButton" style="background-color: #4CAF50; color: white; padding: 10px 15px; border: none; border-radius: 5px; cursor: pointer;">Filtrer par date</button>
+    <div id="filterDates" style="display: none;">
+        <label for="startDate">Date de début:</label>
+        <input type="date" id="startDate" name="startDate">
+        <label for="endDate">Date de fin:</label>
+        <input type="date" id="endDate" name="endDate">
+        <button id="applyFilter" style="background-color: #4CAF50; color: white; padding: 10px 15px; border: none; border-radius: 5px; cursor: pointer;">Appliquer</button>
+    </div>
+    <script>
+        document.getElementById('filterButton').addEventListener('click', function() {
+            document.getElementById('filterDates').style.display = 'block';
+        });
+        document.getElementById('applyFilter').addEventListener('click', function() {
+            // Apply filter logic here
+            document.getElementById('filterDates').style.display = 'none';
+        });
+    </script>
     <main>
         <h1>Dashboard Hôtel</h1>
         <section class="dashboard-section">

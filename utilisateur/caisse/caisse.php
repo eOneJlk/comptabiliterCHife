@@ -57,6 +57,24 @@ $reste_total = $entrees_totales - $sorties_totales;
         </nav>
     </header>
 
+    <button id="filterButton" style="background-color: #4CAF50; color: white; padding: 10px 15px; border: none; border-radius: 5px; cursor: pointer;">Filtrer par date</button>
+        <div id="filterDates" style="display: none;">
+             <label for="startDate">Date de début:</label>
+             <input type="date" id="startDate" name="startDate">
+             <label for="endDate">Date de fin:</label>
+             <input type="date" id="endDate" name="endDate">
+        <button id="applyFilter" style="background-color: #4CAF50; color: white; padding: 10px 15px; border: none; border-radius: 5px; cursor: pointer;">Appliquer</button>
+    </div>
+    <script>
+        document.getElementById('filterButton').addEventListener('click', function() {
+            document.getElementById('filterDates').style.display = 'block';
+        });
+        document.getElementById('applyFilter').addEventListener('click', function() {
+            // Apply filter logic here
+            document.getElementById('filterDates').style.display = 'none';
+        });
+    </script>
+
     <main>
        <section style="background-color: #ffffff; border-radius: 15px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); padding: 30px; max-width: 800px; margin: 0 auto;">
            <div style="background-color: #4a90e2; color: #ffffff; padding: 20px; margin-bottom: 30px; border-radius: 10px; text-align: center; font-weight: bold; font-size: 28px; text-transform: uppercase;">Tableau de bord</div>
