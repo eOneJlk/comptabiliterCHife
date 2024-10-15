@@ -91,13 +91,22 @@ if (!isset($_SESSION['role']) || !in_array($_SESSION['role'], $roles_autorises))
 </header>
 
 <div class="search-bar" style="margin: 20px 0; text-align: center;">
-    <form action="" method="GET" style="display: inline-block;">
+    <form id="searchForm" style="display: inline-block;">
         <label for="date_debut">Date de début:</label>
         <input type="date" id="date_debut" name="date_debut" required style="margin-right: 10px;">
         <label for="date_fin">Date de fin:</label>
         <input type="date" id="date_fin" name="date_fin" required style="margin-right: 10px;">
         <button type="submit" style="padding: 5px 10px; background-color: #4CAF50; color: white; border: none; cursor: pointer;">Rechercher</button>
     </form>
+</div>
+
+<!-- Popup pour afficher les résultats -->
+<div id="resultPopup" class="modal">
+    <div class="modal-content">
+        <span class="close">&times;</span>
+        <h2>Résultats de la recherche</h2>
+        <div id="searchResults"></div>
+    </div>
 </div>
 
 <h1 style="text-align: center;">Formulaire de Stock</h1>
@@ -144,44 +153,52 @@ if (!isset($_SESSION['role']) || !in_array($_SESSION['role'], $roles_autorises))
 <!--Table d'enregistrement de produit-->
 
 <h2>TABLE DES PRODUITS EN STOCK</h2>
-      <table>
-        <thead>
-          <tr>
+<table>
+    <thead>
+        <tr>
             <th>Date d'entrée</th>
             <th>Nom du produit</th>
             <th>Quantité</th>
             <th>Emplacement du stock</th>
-          </tr>
-        </thead>
-        <tbody>
-          <?php
-          // Inclure la connexion à la base de données
-          include('../../dbconnexion.php');
+        </tr>
+    </thead>
+    <tbody>
+        <?php
+        // Inclure la connexion à la base de données
+        include('../../dbconnexion.php');
 
-          // Requête pour récupérer les produits en stock
-          $sql = "SELECT * FROM produits WHERE quantite > 0";
-          $result = $conn->query($sql);
+        // Requête pour récupérer les produits en stock
+        $sql = "SELECT * FROM produits WHERE quantite > 0";
 
-          // Vérifier s'il y a des produits
-          if ($result->num_rows > 0) {
-              // Boucle pour afficher chaque produit
-              while($row = $result->fetch_assoc()) {
-                  echo "<tr>";
-                  echo "<td>" . $row['date_entree'] . "</td>";
-                  echo "<td>" . $row['nom_produit'] . "</td>";
-                  echo "<td>" . $row['quantite'] . "</td>";
-                  echo "<td>" . $row['emplacement_stock'] . "</td>";
-                  echo "</tr>";
-              }
-          } else {
-              echo "<tr><td colspan='4'>Aucun produit en stock</td></tr>";
-          }
+        // Ajouter la condition de date si les paramètres sont présents
+        if (isset($_GET['date_debut']) && isset($_GET['date_fin'])) {
+            $date_debut = $_GET['date_debut'];
+            $date_fin = $_GET['date_fin'];
+            $sql .= " AND date_entree BETWEEN '$date_debut' AND '$date_fin'";
+        }
 
-          // Fermer la connexion
-        
-          ?>
-        </tbody>
-      </table>
+        $result = $conn->query($sql);
+
+        // Vérifier s'il y a des produits
+        if ($result->num_rows > 0) {
+            // Boucle pour afficher chaque produit
+            while($row = $result->fetch_assoc()) {
+                echo "<tr>";
+                echo "<td>" . $row['date_entree'] . "</td>";
+                echo "<td>" . $row['nom_produit'] . "</td>";
+                echo "<td>" . $row['quantite'] . "</td>";
+                echo "<td>" . $row['emplacement_stock'] . "</td>";
+                echo "</tr>";
+            }
+        } else {
+            echo "<tr><td colspan='4'>Aucun produit en stock</td></tr>";
+        }
+
+        // Fermer la connexion
+        $conn->close();
+        ?>
+    </tbody>
+</table>
 
 <!-- Modale du formulaire d'enregistrement de produit -->
 <div id="productModal" class="modal">
@@ -319,7 +336,77 @@ if (!isset($_SESSION['role']) || !in_array($_SESSION['role'], $roles_autorises))
             removeProductModal.style.display = "none";
         }
     }
+
+    document.getElementById('searchForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        var dateDebut = document.getElementById('date_debut').value;
+        var dateFin = document.getElementById('date_fin').value;
+        
+        // Effectuer la requête AJAX
+        var xhr = new XMLHttpRequest();
+        xhr.open('GET', 'search_products.php?date_debut=' + dateDebut + '&date_fin=' + dateFin, true);
+        
+        xhr.onload = function() {
+            if (this.status == 200) {
+                document.getElementById('searchResults').innerHTML = this.responseText;
+                document.getElementById('resultPopup').style.display = 'block';
+            }
+        };
+        
+        xhr.send();
+    });
+
+    // Fermer le popup
+    document.querySelector('.close').addEventListener('click', function() {
+        document.getElementById('resultPopup').style.display = 'none';
+    });
+
+    // Fermer le popup si on clique en dehors
+    window.addEventListener('click', function(event) {
+        if (event.target == document.getElementById('resultPopup')) {
+            document.getElementById('resultPopup').style.display = 'none';
+        }
+    });
 </script>
+
+<style>
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0,0,0,0.4);
+}
+
+.modal-content {
+    background-color: #fefefe;
+    margin: 15% auto;
+    padding: 20px;
+    border: 1px solid #888;
+    width: 80%;
+}
+
+.close {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.close:hover,
+.close:focus {
+    color: black;
+    text-decoration: none;
+    cursor: pointer;
+}
+</style>
+
 <footer>
   <div class="footer-content">
       <style>
