@@ -1,70 +1,75 @@
 <?php
-require_once '../../dbconnexion.php';
 session_start();
 
-// Vérifier si l'utilisateur est connecté
-if (!isset($_SESSION['agent_id'])) {
-    // Rediriger vers la page de connexion si l'utilisateur n'est pas connecté
-    header("Location: ../../login.php");
+// Vérification du rôle
+$roles_autorises = ['admin', 'gerant'];
+if (!isset($_SESSION['role']) || !in_array($_SESSION['role'], $roles_autorises)) {
+    header("Location: ../../acces_refuse.php");
     exit();
 }
-// Récupérer l'ID de l'agent depuis la session
-$agent_id = $_SESSION['agent_id'];
 
-// Vérifier si le formulaire a été soumis
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $nom = htmlspecialchars($conn->real_escape_string($_POST['nom']));
-    $prenom = htmlspecialchars($conn->real_escape_string($_POST['prenom']));
-    $email = htmlspecialchars($conn->real_escape_string($_POST['email']));
-    $telephone = htmlspecialchars($conn->real_escape_string($_POST['telephone']));
-    $adresse = htmlspecialchars($conn->real_escape_string($_POST['adresse']));
-    $departement = htmlspecialchars($conn->real_escape_string($_POST['departement']));
-    $role = htmlspecialchars($conn->real_escape_string($_POST['role']));
-
-    // Requête SQL pour mettre à jour les informations de l'agent
-    $sql = "UPDATE agents SET nom = ?, prenom = ?, email = ?, telephone = ?, adresse = ?, departement = ?, role = ? WHERE id = ?";
-
-    if ($stmt = $conn->prepare($sql)) {
-        $stmt->bind_param("sssssssi", $nom, $prenom, $email, $telephone, $adresse, $departement, $role, $agent_id);
-
-        // Exécuter la requête
-        if ($stmt->execute()) {
-            echo "Informations mises à jour avec succès!";
-        } else {
-            echo "Erreur lors de la mise à jour des informations : " . $conn->error;
-        }
-
-        $stmt->close();
-    }
+// Vérification de l'ID de l'agent
+if (!isset($_GET['id'])) {
+    header("Location: erreur.php?message=ID_agent_manquant");
+    exit();
 }
 
-// Fermer la connexion
-$conn->close();
+$agent_id = $_GET['id'];
+
+// Récupération des informations de l'agent
+$query = "SELECT nom, prenom, email, telephone, adresse, departement, role FROM agents WHERE id = ?";
+if ($stmt = $conn->prepare($query)) {
+    $stmt->bind_param("i", $agent_id);
+    $stmt->execute();
+    $stmt->bind_result($nom, $prenom, $email, $telephone, $adresse, $departement, $role);
+    if ($stmt->fetch()) {
+        // Stockage des informations dans des variables locales au lieu de la session
+        $agent_nom = $nom;
+        $agent_prenom = $prenom;
+        $agent_email = $email;
+        $agent_telephone = $telephone;
+        $agent_adresse = $adresse;
+        $agent_departement = $departement;
+        $agent_role = $role;
+    } else {
+        header("Location: erreur.php?message=Agent_non_trouve");
+        exit();
+    }
+    $stmt->close();
+} else {
+    header("Location: erreur.php?message=Erreur_preparation_requete");
+    exit();
+}
 ?>
 
-<!-- Formulaire de mise à jour des informations -->
-<form action="update.php" method="post">
-    <label for="nom">Nom:</label>
-    <input type="text" id="nom" name="nom" value="<?php echo $_SESSION['nom']; ?>" required><br>
+<form method="POST" action="process_update.php">
+    <input type="hidden" name="id" value="<?php echo $agent_id; ?>">
     
-    <label for="prenom">Prénom:</label>
-    <input type="text" id="prenom" name="prenom" value="<?php echo $_SESSION['prenom']; ?>" required><br>
+    Nom:
+    <input type="text" name="nom" value="<?php echo htmlspecialchars($agent_nom); ?>" required>
     
-    <label for="email">Email:</label>
-    <input type="email" id="email" name="email" value="<?php echo $_SESSION['email']; ?>" required><br>
+    Prénom:
+    <input type="text" name="prenom" value="<?php echo htmlspecialchars($agent_prenom); ?>" required>
     
-    <label for="telephone">Téléphone:</label>
-    <input type="tel" id="telephone" name="telephone" value="<?php echo $_SESSION['telephone']; ?>" required><br>
+    Email:
+    <input type="email" name="email" value="<?php echo htmlspecialchars($agent_email); ?>" required>
     
-    <label for="adresse">Adresse:</label>
-    <input type="text" id="adresse" name="adresse" value="<?php echo $_SESSION['adresse']; ?>" required><br>
+    Téléphone:
+    <input type="tel" name="telephone" value="<?php echo htmlspecialchars($agent_telephone); ?>" required>
     
-    <label for="departement">Département:</label>
-    <input type="text" id="departement" name="departement" value="<?php echo $_SESSION['departement']; ?>" required><br>
+    Adresse:
+    <input type="text" name="adresse" value="<?php echo htmlspecialchars($agent_adresse); ?>" required>
     
-    <label for="role">Rôle:</label>
-    <input type="text" id="role" name="role" value="<?php echo $_SESSION['role']; ?>" required><br>
+    Département:
+    <input type="text" name="departement" value="<?php echo htmlspecialchars($agent_departement); ?>" required>
+    
+    Rôle:
+    <select name="role" required>
+        <option value="admin" <?php echo $agent_role === 'admin' ? 'selected' : ''; ?>>Admin</option>
+        <option value="gerant" <?php echo $agent_role === 'gerant' ? 'selected' : ''; ?>>Gérant</option>
+        <option value="caissier" <?php echo $agent_role === 'caissier' ? 'selected' : ''; ?>>Caissier</option>
+        <!-- Ajoutez d'autres rôles si nécessaire -->
+    </select>
     
     <button type="submit">Mettre à jour</button>
 </form>
-

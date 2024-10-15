@@ -9,6 +9,12 @@ if (!isset($_SESSION['agent_id'])) {
     header("Location: ../../login.php");
     exit();
 }
+$roles_autorises = ['admin','gerant'];
+if (!isset($_SESSION['role']) || !in_array($_SESSION['role'], $roles_autorises)) {
+    // Rediriger vers une page d'erreur ou la page d'accueil si l'utilisateur n'a pas le bon rôle
+    header("Location: ../../acces_refuse.php");
+    exit();
+}
 ?>
 <!DOCTYPE html>
 <html lang="fr">
