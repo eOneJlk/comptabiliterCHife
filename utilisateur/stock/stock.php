@@ -131,7 +131,7 @@ if ($conn->connect_error) {
 <h1 style="text-align: center;">Formulaire de Stock</h1>
 
 <!-- Boutons pour afficher les formulaires -->
-<button id="openReportForm">Ouvrir Formulaire de Rapport</button>
+<button id="openReportForm">Création d'Article de Stock</button>
 <button id="openProductForm">Ouvrir Formulaire d'Enregistrement de Produit</button>
 <button id="openRemoveProductForm">Ouvrir Formulaire de Retrait de Produit</button>
 
@@ -140,26 +140,22 @@ if ($conn->connect_error) {
     <div class="modal-content">
         <span class="close" id="closeReportModal">&times;</span>
         <form action="submit_report.php" method="post">
-            <h2>Formulaire de Rapport</h2>
-            <label for="date">Date:</label>
-            <input type="date" id="date" name="date" required><br>
+            <h2>Formulaire de Création d'Article de Stock</h2>
+            <label for="nom_produit">Nom du produit:</label>
+            <input type="text" id="nom_produit" name="nom_produit" required><br>
 
-            <label for="departement">Département:</label>
-            <select id="departement" name="departement" required>
-                <option value="lundry">Lundry</option>
-                <option value="stock">Stock</option>
-                <option value="reception">Reception</option>
-                <option value="caisse">Caisse</option>
-                <option value="bar">Bar</option>
+            <label for="quantite">Quantité:</label>
+            <input type="number" id="quantite" name="quantite" required><br>
+
+            <label for="emplacement_stock">Emplacement du stock:</label>
+            <select id="emplacement_stock" name="emplacement_stock" required>
+                <option value="Boisson">Boisson</option>
+                <option value="Cuisine">Cuisine</option>
+                <option value="Entretien">Entretien</option>
             </select><br>
 
-            <label for="type">Type de rapport:</label>
-            <select id="type" name="type" required>
-                <option value="chambre">Chambre</option>
-                <option value="stock">Stock</option>
-                <option value="vente_bars">Vente Bars</option>
-                <option value="caisse">Caisse</option>
-            </select><br>
+            <label for="date_entree">Date d'entrée:</label>
+            <input type="date" id="date_entree" name="date_entree" required><br>
 
             <label for="details">Détails:</label>
             <textarea id="details" name="details" rows="4" cols="50" required></textarea><br>
