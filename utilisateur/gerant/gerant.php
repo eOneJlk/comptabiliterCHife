@@ -52,18 +52,23 @@ session_start();
         </section>
         <section class="dashboard-section">
             <h2>Graphiques</h2>
-            <div class="graphique">
-                <canvas id="graphique-1"></canvas>
-            </div>
-            <div class="graphique">
-                <canvas id="graphique-2"></canvas>
-            </div>
-            <!-- Nouveaux graphiques -->
-            <div class="graphique">
-                <canvas id="graphique-3"></canvas>
-            </div>
-            <div class="graphique">
-                <canvas id="graphique-4"></canvas>
+            <div style="display: flex; flex-wrap: wrap; justify-content: space-between;">
+                <div style="width: 100%; display: flex; justify-content: space-between; margin-bottom: 20px;">
+                    <div class="graphique" style="width: 48%;">
+                        <canvas id="graphique-1"></canvas>
+                    </div>
+                    <div class="graphique" style="width: 48%;">
+                        <canvas id="graphique-2"></canvas>
+                    </div>
+                </div>
+                <div style="width: 100%; display: flex; justify-content: space-between;">
+                    <div class="graphique" style="width: 48%;">
+                        <canvas id="graphique-3"></canvas>
+                    </div>
+                    <div class="graphique" style="width: 48%;">
+                        <canvas id="graphique-4"></canvas>
+                    </div>
+                </div>
             </div>
         </section>
 
