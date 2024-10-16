@@ -157,9 +157,6 @@ if ($conn->connect_error) {
             <label for="date_entree">Date d'entrée:</label>
             <input type="date" id="date_entree" name="date_entree" required><br>
 
-            <label for="details">Détails:</label>
-            <textarea id="details" name="details" rows="4" cols="50" required></textarea><br>
-
             <button type="submit">Soumettre</button>
         </form>
     </div>
@@ -222,8 +219,12 @@ if ($conn->connect_error) {
             <label for="quantity">Quantité:</label>
             <input type="number" id="quantity" name="quantity" required><br>
 
-            <label for="stock_location">Emplacement du stock:</label>
-            <input type="text" id="stock_location" name="stock_location" required><br>
+            <label for="emplacement_stock">Emplacement du stock:</label>
+            <select id="emplacement_stock" name="emplacement_stock" required>
+                <option value="Boisson">Boisson</option>
+                <option value="Cuisine">Cuisine</option>
+                <option value="Entretien">Entretien</option>
+            </select><br>
 
             <button type="submit">Enregistrer l'entrée de stock</button>
         </form>
@@ -274,14 +275,23 @@ if ($conn->connect_error) {
         <span class="close" id="closeRemoveProductModal">&times;</span>
         <form action="remove_product.php" method="post">
             <h2>Retirer un Produit du Stock</h2>
-            <label for="product_name">Nom du produit:</label>
-            <input type="text" id="product_name" name="product_name" required autocomplete="off"><br>
+            <select id="product_name" name="product_name" required>
+                <option value="">Sélectionnez un produit</option>
+                <option value="produit1">Produit 1</option>
+                <option value="produit2">Produit 2</option>
+                <option value="produit3">Produit 3</option>
+                <!-- Ajoutez ici plus de produits -->
+            </select>
 
             <label for="quantity">Quantité à retirer:</label>
             <input type="number" id="quantity" name="quantity" required><br>
 
-            <label for="stock_location">Emplacement du stock:</label>
-            <input type="text" id="stock_location" name="stock_location" required><br>
+            <label for="emplacement_stock">Emplacement du stock:</label>
+            <select id="emplacement_stock" name="emplacement_stock" required>
+                <option value="Boisson">Boisson</option>
+                <option value="Cuisine">Cuisine</option>
+                <option value="Entretien">Entretien</option>
+            </select><br>
 
             <label for="date_sortie">Date de sortie:</label>
             <input type="date" id="date_sortie" name="date_sortie" required><br>
