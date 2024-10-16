@@ -212,9 +212,15 @@ if ($conn->connect_error) {
             <h2>Enregistrer un Produit</h2>
             <label for="date">Date d'entrée:</label>
             <input type="date" id="date" name="date" required><br>
-
-            <label for="product_name">Nom du produit:</label>
-            <input type="text" id="product_name" name="product_name" required><br>
+            
+            <label for="emplacement_stock">Nom du Produit</label>
+            <select id="product_name" name="product_name" required>
+                <option value="">Sélectionnez un produit</option>
+                <option value="produit1">Produit 1</option>
+                <option value="produit2">Produit 2</option>
+                <option value="produit3">Produit 3</option>
+                <!-- Ajoutez ici plus de produits -->
+            </select>
 
             <label for="quantity">Quantité:</label>
             <input type="number" id="quantity" name="quantity" required><br>
