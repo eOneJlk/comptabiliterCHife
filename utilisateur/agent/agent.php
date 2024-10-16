@@ -20,7 +20,15 @@
 
     <main>
         <?php
+        session_start();
         require_once '../../dbconnexion.php';
+        
+        // Vérification de l'autorisation
+        if (!isset($_SESSION['role']) || ($_SESSION['role'] != 'admin' && $_SESSION['role'] != 'agent')) {
+            header("Location: ../../acces_refuse.php");
+            exit();
+        }
+        
         // Vérifier si un rapport a déjà été soumis aujourd'hui
         $today = date("Y-m-d");
         $sql = "SELECT * FROM rapports WHERE date = '$today'";

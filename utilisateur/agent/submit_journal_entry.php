@@ -1,8 +1,12 @@
 <?php
-session_start(); // Si tu utilises une session pour gérer l'authentification des agents
-
-// Inclure la connexion à la base de données
-include '../../dbconnexion.php';
+ session_start();
+ require_once '../../dbconnexion.php';
+ 
+ // Vérification de l'autorisation
+ if (!isset($_SESSION['role']) || ($_SESSION['role'] != 'admin' && $_SESSION['role'] != 'agent')) {
+     header("Location: ../../acces_refuse.php");
+     exit();
+ }
 
 // Vérification si les données du formulaire sont soumises
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
