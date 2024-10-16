@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Hôte : 127.0.0.1
--- Généré le : mar. 15 oct. 2024 à 20:21
+-- Généré le : mer. 16 oct. 2024 à 09:28
 -- Version du serveur : 10.4.32-MariaDB
 -- Version de PHP : 8.2.12
 
@@ -71,7 +71,7 @@ CREATE TABLE `depenses` (
 --
 
 INSERT INTO `depenses` (`id`, `date`, `nom`, `description`, `amount`, `etat`, `created_at`) VALUES
-(1, '2024-10-15', 'ACHAT MATERIEL', '0', 39990.00, 'pending', '2024-10-15 17:08:36');
+(1, '2024-10-15', 'ACHAT MATERIEL', '0', 39990.00, 'rejected', '2024-10-15 17:08:36');
 
 -- --------------------------------------------------------
 
@@ -127,6 +127,35 @@ INSERT INTO `produits` (`id`, `date_entree`, `nom_produit`, `quantite`, `emplace
 -- --------------------------------------------------------
 
 --
+-- Structure de la table `rapports`
+--
+
+CREATE TABLE `rapports` (
+  `id` int(11) NOT NULL,
+  `date` date NOT NULL,
+  `nom` varchar(100) NOT NULL,
+  `nombre_check_out` int(11) NOT NULL,
+  `nombre_check_in` int(11) NOT NULL,
+  `chambre_disponible` int(11) NOT NULL,
+  `contenu` text NOT NULL,
+  `entree_cash` decimal(10,2) NOT NULL,
+  `credit` decimal(10,2) NOT NULL,
+  `entree_airtel_money` decimal(10,2) NOT NULL,
+  `entree_carte_pos` decimal(10,2) NOT NULL,
+  `agent_id` int(11) NOT NULL,
+  `submitted_at` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Déchargement des données de la table `rapports`
+--
+
+INSERT INTO `rapports` (`id`, `date`, `nom`, `nombre_check_out`, `nombre_check_in`, `chambre_disponible`, `contenu`, `entree_cash`, `credit`, `entree_airtel_money`, `entree_carte_pos`, `agent_id`, `submitted_at`) VALUES
+(1, '2024-10-16', 'birego', 2, 6, 50, 'chambre libre', 3600.00, 0.00, 260.00, 50.00, 5, '2024-10-16 05:30:48');
+
+-- --------------------------------------------------------
+
+--
 -- Structure de la table `transactions_bancaires`
 --
 
@@ -146,7 +175,7 @@ CREATE TABLE `transactions_bancaires` (
 --
 
 INSERT INTO `transactions_bancaires` (`id`, `transaction_type`, `amount`, `date`, `invoice_number`, `slip_number`, `etat`, `created_at`) VALUES
-(1, 'deposit', 2344.00, '2024-10-15', '2343647489', '121234534', 'pending', '2024-10-15 17:24:44');
+(1, 'deposit', 2344.00, '2024-10-15', '2343647489', '121234534', 'approved', '2024-10-15 17:24:44');
 
 -- --------------------------------------------------------
 
@@ -170,10 +199,9 @@ CREATE TABLE `transactions_caisse` (
 --
 
 INSERT INTO `transactions_caisse` (`id`, `date`, `type`, `montant`, `details`, `compte`, `etat`, `created_at`) VALUES
-(1, '2024-10-15', 'entree', 2000.00, 'ddd', 'DG', 'pending', '2024-10-15 16:26:08'),
-(2, '2024-10-15', 'entree', 2000.00, 'ddd', 'DG', 'pending', '2024-10-15 16:31:37'),
-(3, '2024-10-15', 'sortie', 24000.00, 'PAIEMENT AGENTS', '1234567890', 'pending', '2024-10-15 17:07:31'),
-(4, '2024-10-14', 'entree', 99999999.99, 'd', 'DG', 'pending', '2024-10-15 17:48:27');
+(2, '2024-10-15', 'entree', 2003.00, 'dd', 'DG', 'rejected', '2024-10-15 16:31:37'),
+(3, '2024-10-15', 'sortie', 24000.00, 'PAIEMENT AGENTS', '1234567890', 'approved', '2024-10-15 17:07:31'),
+(4, '2024-10-14', 'entree', 99999999.99, 'd', 'DG', 'rejected', '2024-10-15 17:48:27');
 
 --
 -- Index pour les tables déchargées
@@ -203,6 +231,13 @@ ALTER TABLE `paiements`
 --
 ALTER TABLE `produits`
   ADD PRIMARY KEY (`id`);
+
+--
+-- Index pour la table `rapports`
+--
+ALTER TABLE `rapports`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `agent_id` (`agent_id`);
 
 --
 -- Index pour la table `transactions_bancaires`
@@ -245,6 +280,12 @@ ALTER TABLE `produits`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
+-- AUTO_INCREMENT pour la table `rapports`
+--
+ALTER TABLE `rapports`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+
+--
 -- AUTO_INCREMENT pour la table `transactions_bancaires`
 --
 ALTER TABLE `transactions_bancaires`
@@ -255,6 +296,16 @@ ALTER TABLE `transactions_bancaires`
 --
 ALTER TABLE `transactions_caisse`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+
+--
+-- Contraintes pour les tables déchargées
+--
+
+--
+-- Contraintes pour la table `rapports`
+--
+ALTER TABLE `rapports`
+  ADD CONSTRAINT `rapports_ibfk_1` FOREIGN KEY (`agent_id`) REFERENCES `agents` (`id`);
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
