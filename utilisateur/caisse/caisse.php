@@ -12,8 +12,8 @@ if (!isset($_SESSION['role']) || !in_array($_SESSION['role'], $roles_autorises))
 $date_aujourdhui = date("Y-m-d");
 
 // Transactions de caisse
-$sql_entrees_caisse = "SELECT SUM(montant) as total_entrees FROM transactions_caisse WHERE type='entree' AND DATE(date) = '$date_aujourdhui'";
-$sql_sorties_caisse = "SELECT SUM(montant) as total_sorties FROM transactions_caisse WHERE type='sortie' AND DATE(date) = '$date_aujourdhui'";
+$sql_entrees_caisse = "SELECT SUM(montant) as total_entrees FROM transactions_caisse WHERE type='entree' AND DATE(date) = '$date_aujourdhui' AND etat = 'approved'";
+$sql_sorties_caisse = "SELECT SUM(montant) as total_sorties FROM transactions_caisse WHERE type='sortie' AND DATE(date) = '$date_aujourdhui' AND etat = 'approved'";
 
 $result_entrees_caisse = $conn->query($sql_entrees_caisse);
 $result_sorties_caisse = $conn->query($sql_sorties_caisse);
@@ -22,8 +22,8 @@ $entrees_caisse = $result_entrees_caisse->fetch_assoc()['total_entrees'] ?? 0;
 $sorties_caisse = $result_sorties_caisse->fetch_assoc()['total_sorties'] ?? 0;
 
 // Transactions bancaires
-$sql_depots_banque = "SELECT SUM(amount) as total_depots FROM transactions_bancaires WHERE transaction_type='deposit' AND DATE(date) = '$date_aujourdhui'";
-$sql_retraits_banque = "SELECT SUM(amount) as total_retraits FROM transactions_bancaires WHERE transaction_type='withdrawal' AND DATE(date) = '$date_aujourdhui'";
+$sql_depots_banque = "SELECT SUM(amount) as total_depots FROM transactions_bancaires WHERE transaction_type='deposit' AND DATE(date) = '$date_aujourdhui' AND etat = 'approved'";
+$sql_retraits_banque = "SELECT SUM(amount) as total_retraits FROM transactions_bancaires WHERE transaction_type='withdrawal' AND DATE(date) = '$date_aujourdhui' AND etat = 'approved'";
 
 $result_depots_banque = $conn->query($sql_depots_banque);
 $result_retraits_banque = $conn->query($sql_retraits_banque);
@@ -32,7 +32,7 @@ $depots_banque = $result_depots_banque->fetch_assoc()['total_depots'] ?? 0;
 $retraits_banque = $result_retraits_banque->fetch_assoc()['total_retraits'] ?? 0;
 
 // Dépenses
-$sql_depenses = "SELECT SUM(amount) as total_depenses FROM depenses WHERE DATE(date) = '$date_aujourdhui'";
+$sql_depenses = "SELECT SUM(amount) as total_depenses FROM depenses WHERE DATE(date) = '$date_aujourdhui' AND etat = 'approved'";
 $result_depenses = $conn->query($sql_depenses);
 $depenses = $result_depenses->fetch_assoc()['total_depenses'] ?? 0;
 
