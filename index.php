@@ -35,12 +35,12 @@ $nom_complet = $agent['nom'] . ' ' . $agent['prenom'];
         <nav>
             <div class="logo">Dashboard</div>
             <div class="nav-links" style="display: flex; justify-content: space-between; align-items: center; padding: 20px; background-color: #f9f9f9; border-radius: 5px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);">
-                <a href="utilisateur/dg/dg.php" class="nav-link" style="background-color: hwb(0 80% 20%); color: white; padding: 10px 20px; border: none; border-radius: 4px; cursor: pointer;">DG</a>
-                <a href="utilisateur/gerant/gerant.php" class="nav-link" style="background-color: hwb(0 80% 20%); color: white; padding: 10px 20px; border: none; border-radius: 4px; cursor: pointer;">Gerant</a>
+                <a href="utilisateur/dg/dg.html" class="nav-link" style="background-color: hwb(0 80% 20%); color: white; padding: 10px 20px; border: none; border-radius: 4px; cursor: pointer;">DG</a>
+                <a href="utilisateur/gerant/gerant.html" class="nav-link" style="background-color: hwb(0 80% 20%); color: white; padding: 10px 20px; border: none; border-radius: 4px; cursor: pointer;">Gerant</a>
                 <a href="utilisateur/comptabilite/comptabilite.html" class="nav-link" style="background-color: hwb(0 80% 20%); color: white; padding: 10px 20px; border: none; border-radius: 4px; cursor: pointer;">Comptabilite</a>
                 <a href="utilisateur/stock/stock.php" class="nav-link" style="background-color: hwb(0 80% 20%); color: white; padding: 10px 20px; border: none; border-radius: 4px; cursor: pointer;">Stok</a>
                 <a href="utilisateur/caisse/caisse.php" class="nav-link" style="background-color: hwb(0 80% 20%); color: white; padding: 10px 20px; border: none; border-radius: 4px; cursor: pointer;">Caisse</a>
-                <a href="utilisateur/agant/agant.html" class="nav-link" style="background-color: hwb(0 80% 20%); color: white; padding: 10px 20px; border: none; border-radius: 4px; cursor: pointer;">Agant</a>
+                <a href="utilisateur/agent/agent.php" class="nav-link" style="background-color: hwb(0 80% 20%); color: white; padding: 10px 20px; border: none; border-radius: 4px; cursor: pointer;">Agant</a>
             </div>
             <div class="user-profile">
                 <img src="assets/img/logo_2.png" alt="User Avatar">

@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Hôtel</title>
+    <link rel="stylesheet" href="assets/css/style_utilisateur.css">
+    <style>
+        /* Ajout de styles pour les graphiques */
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: #fff; /* Couleur de fond */
+            padding: 10px 20px; /* Espacement */
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Ombre */
+        }
+
+        .logo-img {
+            width: 100px;
+            height: 100px;
+            border-radius: 20px;
+            margin: 10px;
+        }
+
+        .nav-links {
+            display: flex;
+            list-style-type: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .nav-item {
+            margin: 0 15px; /* Espacement entre les éléments */
+        }
+
+        .nav-link {
+            text-decoration: none;
+            color: #333;
+            font-weight: bold;
+            transition: color 0.3s; /* Transition pour l'effet de survol */
+        }
+
+        .nav-link:hover {
+            color: #4CAF50; /* Couleur au survol */
+        }
+        .dashboard-section {
+            background-color: #f9f9f9;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        .stats {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .stat {
+            background-color: #fff;
+            padding: 10px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            margin: 10px;
+        }
+        
+        .stat span {
+            font-weight: bold;
+            font-size: 24px;
+            color: #333;
+        }
+        
+        .quick-actions {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .quick-actions button {
+            background-color: #4CAF50;
+            color: #fff;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            margin: 10px;
+        }
+        
+        
+        .quick-actions button:hover {
+            background-color: #45a049;
+        }
+        
+        /* Ajout de styles pour les graphiques */
+        .graphique {
+            width: 100%;
+            height: 300px;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        .graphique canvas {
+            width: 100%;
+            height: 100%;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <nav class="navbar">
+            <a class="logo" href="#home"><img src="assets/img/logo_2.png" alt="Logo" class="logo-img"></a>
+            <ul class="nav-links">
+                <li class="nav-item"><a href="index.php" class="nav-link">admin</a></li>
+                <li class="nav-item"><a href="#table_des_rapports" class="nav-link">Les Tables de Données</a></li>
+            </ul>
+        </nav>
+    </header>
+    
+
+    <button id="filterButton" style="background-color: #4CAF50; color: white; padding: 10px 15px; border: none; border-radius: 5px; cursor: pointer;">Filtrer par date</button>
+    <div id="filterDates" style="display: none;">
+        <label for="startDate">Date de début:</label>
+        <input type="date" id="startDate" name="startDate">
+        <label for="endDate">Date de fin:</label>
+        <input type="date" id="endDate" name="endDate">
+        <button id="applyFilter" style="background-color: #4CAF50; color: white; padding: 10px 15px; border: none; border-radius: 5px; cursor: pointer;">Appliquer</button>
+    </div>
+    <script>
+        document.getElementById('filterButton').addEventListener('click', function() {
+            document.getElementById('filterDates').style.display = 'block';
+        });
+        document.getElementById('applyFilter').addEventListener('click', function() {
+            // Apply filter logic here
+            document.getElementById('filterDates').style.display = 'none';
+        });
+    </script>
+    <main>
+        <h1>Dashboard Hôtel</h1>
+        <section class="dashboard-section">
+            <h2>Statistiques Actuelles</h2>
+            <div class="stats">
+                <div class="stat">
+                    <p>Chambres Occupées: <span>50</span></p>
+                </div>
+                <div class="stat">
+                    <p>Chambres Disponibles: <span>100</span></p>
+                </div>
+                <div class="stat">
+                    <p>Nombre de Réservations: <span>200</span></p>
+                </div>
+                <div class="stat">
+                    <p>Nombre d'Employés: <span>50</span></p>
+                </div>
+            </div>
+        </section>
+        <section class="dashboard-section">
+            <h2>Graphiques</h2>
+            <div class="graphique">
+                <canvas id="graphique-1"></canvas>
+            </div>
+            <div class="graphique">
+                <canvas id="graphique-2"></canvas>
+            </div>
+        </section>
+        <div class="table_des_rapports">
+          <table class="" style="width: 100%; border-collapse: collapse; ">
+            <thead>
+                 <tr>
+                     <th style="border: 1px solid #ddd; padding: 8px;">Date</th>
+                     <th style="border: 1px solid #ddd; padding: 8px;">Nom</th>
+                     <th style="border: 1px solid #ddd; padding: 8px;">Nombre de Check Out</th>
+                     <th style="border: 1px solid #ddd; padding: 8px;">Nombre de Check In</th>
+                     <th style="border: 1px solid #ddd; padding: 8px;">Chambres Disponibles</th>
+                     <th style="border: 1px solid #ddd; padding: 8px;">Contenu</th>
+                     <th style="border: 1px solid #ddd; padding: 8px;">Entrée Cash</th>
+                     <th style="border: 1px solid #ddd; padding: 8px;">Crédit</th>
+                     <th style="border: 1px solid #ddd; padding: 8px;">Entrée Airtel Money</th>
+                     <th style="border: 1px solid #ddd; padding: 8px;">Entrée Carte POS</th>
+                     <th style="border: 1px solid #ddd; padding: 8px;">PDF File</th>
+                 </tr>
+            </thead>
+            <tbody>
+                 <!-- Dynamically generated rows will be inserted here -->
+            </tbody>
+          </table>
+        </div>
+    </main>
+
+    <footer>
+      <div class="footer-content">
+          <style>
+              .footer-content {
+                  background-color: #e7e5e5;
+                  padding: 10px 0;
+                  text-align: center;
+                  color: #000000;
+              }
+              .footer-content .logo {
+                  width: 100px;
+                  height: auto;
+                  margin-bottom: 20px;
+              }
+              .footer-content p {
+                  margin-bottom: 20px;
+              }
+              .footer-content .social-links {
+                  display: flex;
+                  justify-content: center;
+                  align-items: center;
+              }
+              .footer-content .social-links a {
+                  margin: 0 10px;
+                  color: #333;
+                  transition: color 0.3s ease;
+              }
+              .footer-content .social-links a:hover {
+                  color: #57a3f3;
+              }
+          </style>
+          <img src="assets/img/logo_2.png" alt="Company Logo" class="logo">
+          <p>&copy; 2024 Chife Hotel. All rights reserved.</p>
+          <div class="social-links">
+              <a href="https://www.facebook.com/" target="_blank"><i class="fab fa-facebook-f"></i></a>
+              <a href="https://www.twitter.com/" target="_blank"><i class="fab fa-twitter"></i></a>
+              <a href="https://www.instagram.com/" target="_blank"><i class="fab fa-instagram"></i></a>
+              <a href="https://www.linkedin.com/" target="_blank"><i class="fab fa-linkedin-in"></i></a>
+          </div>
+      </div>
+  </footer>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <script>
+        // Ajout de code pour les graphiques
+        const graphique1 = document.getElementById('graphique-1').getContext('2d');
+        const graphique2 = document.getElementById('graphique-2').getContext('2d');
+        
+        const data1 = {
+            labels: ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin'],
+            datasets: [{
+                label: 'Chambres Occupées',
+                data: [50, 60, 70, 80, 90, 100],
+                backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                borderColor: 'rgba(255, 99, 132, 1)',
+                borderWidth: 1
+            }]
+        };
+        
+        const data2 = {
+            labels: ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin'],
+            datasets: [{
+                label: 'Réservations',
+                data: [100, 120, 140, 160, 180, 200],
+                backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                borderColor: 'rgba(54, 162, 235, 1)',
+                borderWidth: 1
+            }]
+        };
+        
+        const options = {
+            scales: {
+                yAxes: [{
+                    ticks: {
+                        beginAtZero: true
+                    }
+                }]
+            }
+        };
+        
+        new Chart(graphique1, {
+            type: 'bar',
+            data: data1,
+            options: options
+        });
+        
+        new Chart(graphique2, {
+            type: 'line',
+            data: data2,
+            options: options
+        });
+    </script>
+</body>
+</html>

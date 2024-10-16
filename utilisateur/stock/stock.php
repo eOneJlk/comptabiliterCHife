@@ -40,6 +40,11 @@ if (!isset($_SESSION['role']) || !in_array($_SESSION['role'], $roles_autorises))
     header("Location: ../../acces_refuse.php");
     exit();
 }
+
+// Vérifier si la connexion est réussie
+if ($conn->connect_error) {
+    die("Échec de la connexion : " . $conn->connect_error);
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -114,22 +119,13 @@ if (!isset($_SESSION['role']) || !in_array($_SESSION['role'], $roles_autorises))
 </header>
 
 <div class="search-bar" style="margin: 20px 0; text-align: center;">
-    <form id="searchForm" style="display: inline-block;">
+    <form action="" method="GET" style="display: inline-block;">
         <label for="date_debut">Date de début:</label>
         <input type="date" id="date_debut" name="date_debut" required style="margin-right: 10px;">
         <label for="date_fin">Date de fin:</label>
         <input type="date" id="date_fin" name="date_fin" required style="margin-right: 10px;">
         <button type="submit" style="padding: 5px 10px; background-color: #4CAF50; color: white; border: none; cursor: pointer;">Rechercher</button>
     </form>
-</div>
-
-<!-- Popup pour afficher les résultats -->
-<div id="resultPopup" class="modal">
-    <div class="modal-content">
-        <span class="close">&times;</span>
-        <h2>Résultats de la recherche</h2>
-        <div id="searchResults"></div>
-    </div>
 </div>
 
 <h1 style="text-align: center;">Formulaire de Stock</h1>
@@ -143,8 +139,8 @@ if (!isset($_SESSION['role']) || !in_array($_SESSION['role'], $roles_autorises))
 <div id="reportModal" class="modal">
     <div class="modal-content">
         <span class="close" id="closeReportModal">&times;</span>
-        <form action="generate_report.php" method="post">
-            <h2>Générer un Rapport</h2>
+        <form action="submit_report.php" method="post">
+            <h2>Formulaire de Rapport</h2>
             <label for="date">Date:</label>
             <input type="date" id="date" name="date" required><br>
 
@@ -165,10 +161,10 @@ if (!isset($_SESSION['role']) || !in_array($_SESSION['role'], $roles_autorises))
                 <option value="caisse">Caisse</option>
             </select><br>
 
-            <label for="produit">Produit (optionnel):</label>
-            <input type="text" id="produit" name="produit"><br>
+            <label for="details">Détails:</label>
+            <textarea id="details" name="details" rows="4" cols="50" required></textarea><br>
 
-            <button type="submit" name="action" value="generate_report">Générer le rapport</button>
+            <button type="submit">Soumettre</button>
         </form>
     </div>
 </div>
@@ -176,68 +172,44 @@ if (!isset($_SESSION['role']) || !in_array($_SESSION['role'], $roles_autorises))
 <!--Table d'enregistrement de produit-->
 
 <h2>TABLE DES PRODUITS EN STOCK</h2>
-<table>
-    <thead>
-        <tr>
+      <table>
+        <thead>
+          <tr>
             <th>Date d'entrée</th>
             <th>Nom du produit</th>
             <th>Quantité</th>
             <th>Emplacement du stock</th>
-            <th>Action</th>
-            <th>Dernière modification</th>
-        </tr>
-    </thead>
-    <tbody>
-        <?php
-        // Inclure la connexion à la base de données
-        include('../../dbconnexion.php');
+          </tr>
+        </thead>
+        <tbody>
+          <?php
+          // Inclure la connexion à la base de données
+          include('../../dbconnexion.php');
 
-        // Requête pour récupérer les produits en stock
-        $sql = "SELECT p.*, CONCAT(a.nom, ' ', a.prenom) AS nom_modificateur 
-                FROM produits p 
-                LEFT JOIN agents a ON p.id_modificateur = a.id 
-                WHERE p.quantite > 0 AND p.date_suppression IS NULL";
+          // Requête pour récupérer les produits en stock
+          $sql = "SELECT * FROM produits WHERE quantite > 0";
+          $result = $conn->query($sql);
 
-        // Ajouter la condition de date si les paramètres sont présents
-        if (isset($_GET['date_debut']) && isset($_GET['date_fin'])) {
-            $date_debut = $_GET['date_debut'];
-            $date_fin = $_GET['date_fin'];
-            $sql .= " AND p.date_entree BETWEEN '$date_debut' AND '$date_fin'";
-        }
+          // Vérifier s'il y a des produits
+          if ($result->num_rows > 0) {
+              // Boucle pour afficher chaque produit
+              while($row = $result->fetch_assoc()) {
+                  echo "<tr>";
+                  echo "<td>" . $row['date_entree'] . "</td>";
+                  echo "<td>" . $row['nom_produit'] . "</td>";
+                  echo "<td>" . $row['quantite'] . "</td>";
+                  echo "<td>" . $row['emplacement_stock'] . "</td>";
+                  echo "</tr>";
+              }
+          } else {
+              echo "<tr><td colspan='4'>Aucun produit en stock</td></tr>";
+          }
 
-        $result = $conn->query($sql);
-
-        // Vérifier s'il y a des produits
-        if ($result->num_rows > 0) {
-            // Boucle pour afficher chaque produit
-            while($row = $result->fetch_assoc()) {
-                echo "<tr>";
-                echo "<td>" . $row['date_entree'] . "</td>";
-                echo "<td>" . $row['nom_produit'] . "</td>";
-                echo "<td>" . $row['quantite'] . "</td>";
-                echo "<td>" . $row['emplacement_stock'] . "</td>";
-                echo "<td>
-                        <button onclick='openModifyModal(" . $row['id'] . ")'>Modifier</button>
-                      </td>";
-                if ($row['date_modification'] === null) {
-                    echo "<td><span style='background-color: yellow;'>Aucune modification</span></td>";
-                } else {
-                    echo "<td>" . $row['date_modification'] . " par " . $row['nom_modificateur'] . "</td>";
-                }
-                echo "</tr>";
-            }
-        } else {
-            echo "<tr><td colspan='6'>Aucun produit en stock</td></tr>";
-        }
-
-        // Fermer la connexion
-        $conn->close();
-        ?>
-    </tbody>
-</table>
-
-<script>
-</script>
+          // Fermer la connexion
+        
+          ?>
+        </tbody>
+      </table>
 
 <!-- Modale du formulaire d'enregistrement de produit -->
 <div id="productModal" class="modal">
@@ -255,20 +227,13 @@ if (!isset($_SESSION['role']) || !in_array($_SESSION['role'], $roles_autorises))
             <input type="number" id="quantity" name="quantity" required><br>
 
             <label for="stock_location">Emplacement du stock:</label>
-            <select id="stock_location" name="stock_location" required>
-                <option value="lundry">Lundry</option>
-                <option value="stock">Stock</option>
-                <option value="reception">Reception</option>
-                <option value="caisse">Caisse</option>
-                <option value="bar">Bar</option>
-            </select><br>
-
+            <input type="text" id="stock_location" name="stock_location" required><br>
 
             <button type="submit">Enregistrer l'entrée de stock</button>
         </form>
     </div>
 </div>
-<h2>TABLE DES RETRAIT PRODUITS EN STOCK</h2>
+<h2>TABLE DES PRODUITS EN STOCK</h2>
     <table>
         <thead>
             <tr>
@@ -320,13 +285,7 @@ if (!isset($_SESSION['role']) || !in_array($_SESSION['role'], $roles_autorises))
             <input type="number" id="quantity" name="quantity" required><br>
 
             <label for="stock_location">Emplacement du stock:</label>
-            <select id="stock_location" name="stock_location" required>
-                <option value="lundry">Lundry</option>
-                <option value="stock">Stock</option>
-                <option value="reception">Reception</option>
-                <option value="caisse">Caisse</option>
-                <option value="bar">Bar</option>
-            </select><br>
+            <input type="text" id="stock_location" name="stock_location" required><br>
 
             <label for="date_sortie">Date de sortie:</label>
             <input type="date" id="date_sortie" name="date_sortie" required><br>
@@ -335,6 +294,63 @@ if (!isset($_SESSION['role']) || !in_array($_SESSION['role'], $roles_autorises))
         </form>
     </div>
 </div>
+
+<script>
+    // Get the modals
+    var reportModal = document.getElementById("reportModal");
+    var productModal = document.getElementById("productModal");
+    var removeProductModal = document.getElementById("removeProductModal");
+
+    // Get the buttons that open the modals
+    var openReportFormBtn = document.getElementById("openReportForm");
+    var openProductFormBtn = document.getElementById("openProductForm");
+    var openRemoveProductFormBtn = document.getElementById("openRemoveProductForm");
+
+    // Get the <span> elements that close the modals
+    var closeReportModal = document.getElementById("closeReportModal");
+    var closeProductModal = document.getElementById("closeProductModal");
+    var closeRemoveProductModal = document.getElementById("closeRemoveProductModal");
+
+    // When the user clicks the button, open the corresponding modal
+    openReportFormBtn.onclick = function() {
+        reportModal.style.display = "block";
+    }
+
+    openProductFormBtn.onclick = function() {
+        productModal.style.display = "block";
+    }
+
+    openRemoveProductFormBtn.onclick = function() {
+        removeProductModal.style.display = "block";
+    }
+
+    // When the user clicks on <span> (x), close the modal
+    closeReportModal.onclick = function() {
+        reportModal.style.display = "none";
+    }
+
+    closeProductModal.onclick = function() {
+        productModal.style.display = "none";
+    }
+
+    closeRemoveProductModal.onclick = function() {
+        removeProductModal.style.display = "none";
+    }
+
+    // When the user clicks anywhere outside of the modal, close it
+    window.onclick = function(event) {
+        if (event.target == reportModal) {
+            reportModal.style.display = "none";
+        } else if (event.target == productModal) {
+            productModal.style.display = "none";
+        } else if (event.target == removeProductModal) {
+            removeProductModal.style.display = "none";
+        }
+    }
+</script>
+      
+</body>
+</html>
 
 <script>
     
@@ -395,7 +411,6 @@ function openModifyModal(productId) {
     var removeProductModal = document.getElementById("removeProductModal");
 
     // Get the buttons that open the modals
-    var openReportFormBtn = document.getElementById("openReportForm");
     var openProductFormBtn = document.getElementById("openProductForm");
     var openRemoveProductFormBtn = document.getElementById("openRemoveProductForm");
 
@@ -409,12 +424,17 @@ function openModifyModal(productId) {
         reportModal.style.display = "block";
     }
 
-    openProductFormBtn.onclick = function() {
-        productModal.style.display = "block";
+    // Assurez-vous que les boutons existent avant d'ajouter des événements
+    if (openProductFormBtn) {
+        openProductFormBtn.onclick = function() {
+            productModal.style.display = "block";
+        }
     }
 
-    openRemoveProductFormBtn.onclick = function() {
-        removeProductModal.style.display = "block";
+    if (openRemoveProductFormBtn) {
+        openRemoveProductFormBtn.onclick = function() {
+            removeProductModal.style.display = "block";
+        }
     }
 
     // When the user clicks on <span> (x), close the modal
