@@ -1,3 +1,16 @@
+<?php
+session_start();
+ 
+                 // Assurez-vous d'avoir une connexion à la base de données établie
+                 include '../../dbconnexion.php';
+            
+                 $roles_autorises = ['admin','gerant']; // Ajoutez les rôles autorisés à accéder à la gerant
+                if (!isset($_SESSION['role']) || !in_array($_SESSION['role'], $roles_autorises)) {
+                    // Rediriger vers une page d'erreur ou la page d'accueil si l'utilisateur n'a pas le bon rôle
+                    echo "<script>window.location.href = '../../acces_refuse.php';</script>";
+                    exit();
+                }
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -5,71 +18,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard Hôtel</title>
     <link rel="stylesheet" href="assets/css/style_utilisateur.css">
-    <style>
-        /* Ajout de styles pour les graphiques */
-        .dashboard-section {
-            background-color: #f9f9f9;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-        }
-        
-        .stats {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        
-        .stat {
-            background-color: #fff;
-            padding: 10px;
-            border-radius: 10px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            margin: 10px;
-        }
-        
-        .stat span {
-            font-weight: bold;
-            font-size: 24px;
-            color: #333;
-        }
-        
-        .quick-actions {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        
-        .quick-actions button {
-            background-color: #4CAF50;
-            color: #fff;
-            padding: 10px 20px;
-            border: none;
-            border-radius: 10px;
-            cursor: pointer;
-            margin: 10px;
-        }
-        
-        
-        .quick-actions button:hover {
-            background-color: #45a049;
-        }
-        
-        /* Ajout de styles pour les graphiques */
-        .graphique {
-            width: 100%;
-            height: 300px;
-            background-color: #fff;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-        }
-        
-        .graphique canvas {
-            width: 100%;
-            height: 100%;
-        }
-    </style>
+    <link rel="stylesheet" href="assets/css/style_gerant.css">
 </head>
 <body>
     <header>
@@ -122,22 +71,89 @@
             <thead>
                  <tr>
                      <th style="border: 1px solid #ddd; padding: 8px;">Date</th>
-                     <th style="border: 1px solid #ddd; padding: 8px;">Nom</th>
+                     <th style="border: 1px solid #ddd; padding: 8px;">Agent</th>
                      <th style="border: 1px solid #ddd; padding: 8px;">Nombre de Check Out</th>
                      <th style="border: 1px solid #ddd; padding: 8px;">Nombre de Check In</th>
                      <th style="border: 1px solid #ddd; padding: 8px;">Chambres Disponibles</th>
-                     <th style="border: 1px solid #ddd; padding: 8px;">Contenu</th>
                      <th style="border: 1px solid #ddd; padding: 8px;">Entrée Cash</th>
                      <th style="border: 1px solid #ddd; padding: 8px;">Crédit</th>
                      <th style="border: 1px solid #ddd; padding: 8px;">Entrée Airtel Money</th>
                      <th style="border: 1px solid #ddd; padding: 8px;">Entrée Carte POS</th>
-                     <th style="border: 1px solid #ddd; padding: 8px;">PDF File</th>
+                     <th style="border: 1px solid #ddd; padding: 8px;">Total Entrées</th>
+                     <th style="border: 1px solid #ddd; padding: 8px;">Détails</th>
                  </tr>
             </thead>
             <tbody>
-                 <!-- Dynamically generated rows will be inserted here -->
-            </tbody>
-        </table>
+                 <?php
+                 
+                 // Assurez-vous d'avoir une connexion à la base de données établie
+                 include '../../dbconnexion.php';
+            
+                 $roles_autorises = ['admin','gerant']; // Ajoutez les rôles autorisés à accéder à la gerant
+                if (!isset($_SESSION['role']) || !in_array($_SESSION['role'], $roles_autorises)) {
+                    // Rediriger vers une page d'erreur ou la page d'accueil si l'utilisateur n'a pas le bon rôle
+                    echo "<script>window.location.href = '../../acces_refuse.php';</script>";
+                    exit();
+                }
+
+                 $sql = "SELECT * FROM rapports ORDER BY date DESC";
+                 $result = $conn->query($sql);
+
+                 if ($result->num_rows > 0) {
+                     while($row = $result->fetch_assoc()) {
+                         echo "<tr>";
+                         echo "<td style='border: 1px solid #ddd; padding: 8px;'>" . $row['date'] . "</td>";
+                         echo "<td style='border: 1px solid #ddd; padding: 8px;'>";
+                         // Vérifiez si une colonne faisant référence à l'agent existe
+                         $agent_column = null;
+                         foreach ($row as $key => $value) {
+                             if (strpos(strtolower($key), 'agent') !== false) {
+                                 $agent_column = $key;
+                                 break;
+                             }
+                         }
+                         if ($agent_column !== null && !empty($row[$agent_column])) {
+                             $agent_id = $row[$agent_column];
+                             $sql_agent = "SELECT nom, prenom FROM agents WHERE id = ?";
+                             $stmt = $conn->prepare($sql_agent);
+                             $stmt->bind_param("i", $agent_id);
+                             $stmt->execute();
+                             $result_agent = $stmt->get_result();
+                             if ($result_agent->num_rows > 0) {
+                                 $agent = $result_agent->fetch_assoc();
+                                 echo htmlspecialchars($agent['nom'] . ' ' . $agent['prenom']);
+                             } else {
+                                 echo "Agent inconnu";
+                             }
+                         } else {
+                             echo "Information d'agent non disponible";
+                         }
+                         echo "</td>";
+                         echo "<td style='border: 1px solid #ddd; padding: 8px;'>" . $row['nombre_check_out'] . "</td>";
+                         echo "<td style='border: 1px solid #ddd; padding: 8px;'>" . $row['nombre_check_in'] . "</td>";
+                         echo "<td style='border: 1px solid #ddd; padding: 8px;'>" . $row['chambre_disponible'] . "</td>";
+                         echo "<td style='border: 1px solid #ddd; padding: 8px;'>" . number_format($row['entree_cash'], 2, ',', ' ') . " $</td>";
+                         echo "<td style='border: 1px solid #ddd; padding: 8px;'>" . number_format($row['credit'], 2, ',', ' ') . " $</td>";
+                         echo "<td style='border: 1px solid #ddd; padding: 8px;'>" . number_format($row['entree_airtel_money'], 2, ',', ' ') . " $</td>";
+                         echo "<td style='border: 1px solid #ddd; padding: 8px;'>" . number_format($row['entree_carte_pos'], 2, ',', ' ') . " $</td>";
+                         $total_entrees = $row['entree_cash'] + $row['credit'] + $row['entree_airtel_money'] + $row['entree_carte_pos'];
+                         echo "<td style='border: 1px solid #ddd; padding: 8px;'>" . number_format($total_entrees, 2, ',', ' ') . " $</td>";
+                         echo "<td style='border: 1px solid #ddd; padding: 8px;'>";
+                         echo "<div style='display: flex; justify-content: space-between;'>";
+                         echo "<a href='details_rapport.php?id=" . $row['id'] . "' style='text-decoration: none; flex: 1; margin-right: 5px;'>";
+                         echo "<button style='background-color: #4CAF50; color: white; padding: 5px 10px; border: none; border-radius: 3px; cursor: pointer; width: 100%;'>Voir détails</button>";
+                         echo "</a>";
+                         echo "<a href='generer_rapport_pdf.php?id=" . $row['id'] . "' style='text-decoration: none; flex: 1;'>";
+                         echo "<button style='background-color: #007bff; color: white; padding: 5px 10px; border: none; border-radius: 3px; cursor: pointer; width: 100%;'>Télécharger PDF</button>";
+                         echo "</a>";
+                         echo "</div>";
+                         echo "</td>";
+                         echo "</tr>";
+                     }
+                 } else {
+                     echo "<tr><td colspan='11' style='border: 1px solid #ddd; padding: 8px; text-align: center;'>Aucun rapport disponible.</td></tr>";
+                 }
+                 ?>
         
     </main>
 
