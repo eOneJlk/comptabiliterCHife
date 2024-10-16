@@ -40,11 +40,6 @@ if (!isset($_SESSION['role']) || !in_array($_SESSION['role'], $roles_autorises))
     header("Location: ../../acces_refuse.php");
     exit();
 }
-
-// Vérifier si la connexion est réussie
-if ($conn->connect_error) {
-    die("Échec de la connexion : " . $conn->connect_error);
-}
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -119,7 +114,7 @@ if ($conn->connect_error) {
 </header>
 
 <div class="search-bar" style="margin: 20px 0; text-align: center;">
-    <form action="" method="GET" style="display: inline-block;">
+    <form id="searchForm" style="display: inline-block;">
         <label for="date_debut">Date de début:</label>
         <input type="date" id="date_debut" name="date_debut" required style="margin-right: 10px;">
         <label for="date_fin">Date de fin:</label>
@@ -128,10 +123,19 @@ if ($conn->connect_error) {
     </form>
 </div>
 
+<!-- Popup pour afficher les résultats -->
+<div id="resultPopup" class="modal">
+    <div class="modal-content">
+        <span class="close">&times;</span>
+        <h2>Résultats de la recherche</h2>
+        <div id="searchResults"></div>
+    </div>
+</div>
+
 <h1 style="text-align: center;">Formulaire de Stock</h1>
 
 <!-- Boutons pour afficher les formulaires -->
-<button id="openReportForm">Création d'Article de Stock</button>
+<button id="openReportForm">Ouvrir Formulaire de Rapport</button>
 <button id="openProductForm">Ouvrir Formulaire d'Enregistrement de Produit</button>
 <button id="openRemoveProductForm">Ouvrir Formulaire de Retrait de Produit</button>
 
@@ -139,25 +143,32 @@ if ($conn->connect_error) {
 <div id="reportModal" class="modal">
     <div class="modal-content">
         <span class="close" id="closeReportModal">&times;</span>
-        <form action="submit_report.php" method="post">
-            <h2>Formulaire de Création d'Article de Stock</h2>
-            <label for="nom_produit">Nom du produit:</label>
-            <input type="text" id="nom_produit" name="nom_produit" required><br>
+        <form action="generate_report.php" method="post">
+            <h2>Générer un Rapport</h2>
+            <label for="date">Date:</label>
+            <input type="date" id="date" name="date" required><br>
 
-            <label for="quantite">Quantité:</label>
-            <input type="number" id="quantite" name="quantite" required><br>
-
-            <label for="emplacement_stock">Emplacement du stock:</label>
-            <select id="emplacement_stock" name="emplacement_stock" required>
-                <option value="Boisson">Boisson</option>
-                <option value="Cuisine">Cuisine</option>
-                <option value="Entretien">Entretien</option>
+            <label for="departement">Département:</label>
+            <select id="departement" name="departement" required>
+                <option value="lundry">Lundry</option>
+                <option value="stock">Stock</option>
+                <option value="reception">Reception</option>
+                <option value="caisse">Caisse</option>
+                <option value="bar">Bar</option>
             </select><br>
 
-            <label for="date_entree">Date d'entrée:</label>
-            <input type="date" id="date_entree" name="date_entree" required><br>
+            <label for="type">Type de rapport:</label>
+            <select id="type" name="type" required>
+                <option value="chambre">Chambre</option>
+                <option value="stock">Stock</option>
+                <option value="vente_bars">Vente Bars</option>
+                <option value="caisse">Caisse</option>
+            </select><br>
 
-            <button type="submit">Soumettre</button>
+            <label for="produit">Produit (optionnel):</label>
+            <input type="text" id="produit" name="produit"><br>
+
+            <button type="submit" name="action" value="generate_report">Générer le rapport</button>
         </form>
     </div>
 </div>
@@ -165,44 +176,68 @@ if ($conn->connect_error) {
 <!--Table d'enregistrement de produit-->
 
 <h2>TABLE DES PRODUITS EN STOCK</h2>
-      <table>
-        <thead>
-          <tr>
+<table>
+    <thead>
+        <tr>
             <th>Date d'entrée</th>
             <th>Nom du produit</th>
             <th>Quantité</th>
             <th>Emplacement du stock</th>
-          </tr>
-        </thead>
-        <tbody>
-          <?php
-          // Inclure la connexion à la base de données
-          include('../../dbconnexion.php');
+            <th>Action</th>
+            <th>Dernière modification</th>
+        </tr>
+    </thead>
+    <tbody>
+        <?php
+        // Inclure la connexion à la base de données
+        include('../../dbconnexion.php');
 
-          // Requête pour récupérer les produits en stock
-          $sql = "SELECT * FROM produits WHERE quantite > 0";
-          $result = $conn->query($sql);
+        // Requête pour récupérer les produits en stock
+        $sql = "SELECT p.*, CONCAT(a.nom, ' ', a.prenom) AS nom_modificateur 
+                FROM produits p 
+                LEFT JOIN agents a ON p.id_modificateur = a.id 
+                WHERE p.quantite > 0 AND p.date_suppression IS NULL";
 
-          // Vérifier s'il y a des produits
-          if ($result->num_rows > 0) {
-              // Boucle pour afficher chaque produit
-              while($row = $result->fetch_assoc()) {
-                  echo "<tr>";
-                  echo "<td>" . $row['date_entree'] . "</td>";
-                  echo "<td>" . $row['nom_produit'] . "</td>";
-                  echo "<td>" . $row['quantite'] . "</td>";
-                  echo "<td>" . $row['emplacement_stock'] . "</td>";
-                  echo "</tr>";
-              }
-          } else {
-              echo "<tr><td colspan='4'>Aucun produit en stock</td></tr>";
-          }
+        // Ajouter la condition de date si les paramètres sont présents
+        if (isset($_GET['date_debut']) && isset($_GET['date_fin'])) {
+            $date_debut = $_GET['date_debut'];
+            $date_fin = $_GET['date_fin'];
+            $sql .= " AND p.date_entree BETWEEN '$date_debut' AND '$date_fin'";
+        }
 
-          // Fermer la connexion
-        
-          ?>
-        </tbody>
-      </table>
+        $result = $conn->query($sql);
+
+        // Vérifier s'il y a des produits
+        if ($result->num_rows > 0) {
+            // Boucle pour afficher chaque produit
+            while($row = $result->fetch_assoc()) {
+                echo "<tr>";
+                echo "<td>" . $row['date_entree'] . "</td>";
+                echo "<td>" . $row['nom_produit'] . "</td>";
+                echo "<td>" . $row['quantite'] . "</td>";
+                echo "<td>" . $row['emplacement_stock'] . "</td>";
+                echo "<td>
+                        <button onclick='openModifyModal(" . $row['id'] . ")'>Modifier</button>
+                      </td>";
+                if ($row['date_modification'] === null) {
+                    echo "<td><span style='background-color: yellow;'>Aucune modification</span></td>";
+                } else {
+                    echo "<td>" . $row['date_modification'] . " par " . $row['nom_modificateur'] . "</td>";
+                }
+                echo "</tr>";
+            }
+        } else {
+            echo "<tr><td colspan='6'>Aucun produit en stock</td></tr>";
+        }
+
+        // Fermer la connexion
+        $conn->close();
+        ?>
+    </tbody>
+</table>
+
+<script>
+</script>
 
 <!-- Modale du formulaire d'enregistrement de produit -->
 <div id="productModal" class="modal">
@@ -212,31 +247,28 @@ if ($conn->connect_error) {
             <h2>Enregistrer un Produit</h2>
             <label for="date">Date d'entrée:</label>
             <input type="date" id="date" name="date" required><br>
-            
-            <label for="emplacement_stock">Nom du Produit</label>
-            <select id="product_name" name="product_name" required>
-                <option value="">Sélectionnez un produit</option>
-                <option value="produit1">Produit 1</option>
-                <option value="produit2">Produit 2</option>
-                <option value="produit3">Produit 3</option>
-                <!-- Ajoutez ici plus de produits -->
-            </select>
+
+            <label for="product_name">Nom du produit:</label>
+            <input type="text" id="product_name" name="product_name" required><br>
 
             <label for="quantity">Quantité:</label>
             <input type="number" id="quantity" name="quantity" required><br>
 
-            <label for="emplacement_stock">Emplacement du stock:</label>
-            <select id="emplacement_stock" name="emplacement_stock" required>
-                <option value="Boisson">Boisson</option>
-                <option value="Cuisine">Cuisine</option>
-                <option value="Entretien">Entretien</option>
+            <label for="stock_location">Emplacement du stock:</label>
+            <select id="stock_location" name="stock_location" required>
+                <option value="lundry">Lundry</option>
+                <option value="stock">Stock</option>
+                <option value="reception">Reception</option>
+                <option value="caisse">Caisse</option>
+                <option value="bar">Bar</option>
             </select><br>
+
 
             <button type="submit">Enregistrer l'entrée de stock</button>
         </form>
     </div>
 </div>
-<h2>TABLE DES PRODUITS EN STOCK</h2>
+<h2>TABLE DES RETRAIT PRODUITS EN STOCK</h2>
     <table>
         <thead>
             <tr>
@@ -281,22 +313,19 @@ if ($conn->connect_error) {
         <span class="close" id="closeRemoveProductModal">&times;</span>
         <form action="remove_product.php" method="post">
             <h2>Retirer un Produit du Stock</h2>
-            <select id="product_name" name="product_name" required>
-                <option value="">Sélectionnez un produit</option>
-                <option value="produit1">Produit 1</option>
-                <option value="produit2">Produit 2</option>
-                <option value="produit3">Produit 3</option>
-                <!-- Ajoutez ici plus de produits -->
-            </select>
+            <label for="product_name">Nom du produit:</label>
+            <input type="text" id="product_name" name="product_name" required autocomplete="off"><br>
 
             <label for="quantity">Quantité à retirer:</label>
             <input type="number" id="quantity" name="quantity" required><br>
 
-            <label for="emplacement_stock">Emplacement du stock:</label>
-            <select id="emplacement_stock" name="emplacement_stock" required>
-                <option value="Boisson">Boisson</option>
-                <option value="Cuisine">Cuisine</option>
-                <option value="Entretien">Entretien</option>
+            <label for="stock_location">Emplacement du stock:</label>
+            <select id="stock_location" name="stock_location" required>
+                <option value="lundry">Lundry</option>
+                <option value="stock">Stock</option>
+                <option value="reception">Reception</option>
+                <option value="caisse">Caisse</option>
+                <option value="bar">Bar</option>
             </select><br>
 
             <label for="date_sortie">Date de sortie:</label>
@@ -306,63 +335,6 @@ if ($conn->connect_error) {
         </form>
     </div>
 </div>
-
-<script>
-    // Get the modals
-    var reportModal = document.getElementById("reportModal");
-    var productModal = document.getElementById("productModal");
-    var removeProductModal = document.getElementById("removeProductModal");
-
-    // Get the buttons that open the modals
-    var openReportFormBtn = document.getElementById("openReportForm");
-    var openProductFormBtn = document.getElementById("openProductForm");
-    var openRemoveProductFormBtn = document.getElementById("openRemoveProductForm");
-
-    // Get the <span> elements that close the modals
-    var closeReportModal = document.getElementById("closeReportModal");
-    var closeProductModal = document.getElementById("closeProductModal");
-    var closeRemoveProductModal = document.getElementById("closeRemoveProductModal");
-
-    // When the user clicks the button, open the corresponding modal
-    openReportFormBtn.onclick = function() {
-        reportModal.style.display = "block";
-    }
-
-    openProductFormBtn.onclick = function() {
-        productModal.style.display = "block";
-    }
-
-    openRemoveProductFormBtn.onclick = function() {
-        removeProductModal.style.display = "block";
-    }
-
-    // When the user clicks on <span> (x), close the modal
-    closeReportModal.onclick = function() {
-        reportModal.style.display = "none";
-    }
-
-    closeProductModal.onclick = function() {
-        productModal.style.display = "none";
-    }
-
-    closeRemoveProductModal.onclick = function() {
-        removeProductModal.style.display = "none";
-    }
-
-    // When the user clicks anywhere outside of the modal, close it
-    window.onclick = function(event) {
-        if (event.target == reportModal) {
-            reportModal.style.display = "none";
-        } else if (event.target == productModal) {
-            productModal.style.display = "none";
-        } else if (event.target == removeProductModal) {
-            removeProductModal.style.display = "none";
-        }
-    }
-</script>
-      
-</body>
-</html>
 
 <script>
     
@@ -423,6 +395,7 @@ function openModifyModal(productId) {
     var removeProductModal = document.getElementById("removeProductModal");
 
     // Get the buttons that open the modals
+    var openReportFormBtn = document.getElementById("openReportForm");
     var openProductFormBtn = document.getElementById("openProductForm");
     var openRemoveProductFormBtn = document.getElementById("openRemoveProductForm");
 
@@ -436,17 +409,12 @@ function openModifyModal(productId) {
         reportModal.style.display = "block";
     }
 
-    // Assurez-vous que les boutons existent avant d'ajouter des événements
-    if (openProductFormBtn) {
-        openProductFormBtn.onclick = function() {
-            productModal.style.display = "block";
-        }
+    openProductFormBtn.onclick = function() {
+        productModal.style.display = "block";
     }
 
-    if (openRemoveProductFormBtn) {
-        openRemoveProductFormBtn.onclick = function() {
-            removeProductModal.style.display = "block";
-        }
+    openRemoveProductFormBtn.onclick = function() {
+        removeProductModal.style.display = "block";
     }
 
     // When the user clicks on <span> (x), close the modal
