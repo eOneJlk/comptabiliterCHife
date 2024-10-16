@@ -316,28 +316,64 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['action']) && isset($_P
         const graphique1 = document.getElementById('graphique-1').getContext('2d');
         const graphique2 = document.getElementById('graphique-2').getContext('2d');
         
+        <?php
+        $sql_chambres_occupees = "SELECT DATE(date) as jour, SUM(nombre_check_in - nombre_check_out) as chambres_occupees 
+                                  FROM rapports 
+                                  WHERE date >= DATE_SUB(CURDATE(), INTERVAL 6 MONTH) 
+                                  GROUP BY MONTH(date) 
+                                  ORDER BY jour ASC 
+                                  LIMIT 6";
+        $result_chambres_occupees = $conn->query($sql_chambres_occupees);
+
+        $labels = [];
+        $data_chambres_occupees = [];
+
+        while ($row = $result_chambres_occupees->fetch_assoc()) {
+            $labels[] = date('M', strtotime($row['jour']));
+            $data_chambres_occupees[] = $row['chambres_occupees'];
+        }
+        ?>
+
         const data1 = {
-            labels: ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin'],
+            labels: <?php echo json_encode($labels); ?>,
             datasets: [{
                 label: 'Chambres Occupées',
-                data: [50, 60, 70, 80, 90, 100],
+                data: <?php echo json_encode($data_chambres_occupees); ?>,
                 backgroundColor: 'rgba(255, 99, 132, 0.2)',
                 borderColor: 'rgba(255, 99, 132, 1)',
-                borderWidth: 1
+                borderWidth: 1,
+                fill: true
             }]
         };
         
-        const data2 = {
-            labels: ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin'],
-            datasets: [{
-                label: 'Réservations',
-                data: [100, 120, 140, 160, 180, 200],
-                backgroundColor: 'rgba(54, 162, 235, 0.2)',
-                borderColor: 'rgba(54, 162, 235, 1)',
-                borderWidth: 1
-            }]
-        };
-        
+        <?php
+$sql_reservations = "SELECT DATE(date) as jour, SUM(nombre_check_in) as reservations 
+                     FROM rapports 
+                     WHERE date >= DATE_SUB(CURDATE(), INTERVAL 6 MONTH) 
+                     GROUP BY MONTH(date) 
+                     ORDER BY jour ASC 
+                     LIMIT 6";
+$result_reservations = $conn->query($sql_reservations);
+
+$labels = [];
+$data_reservations = [];
+
+while ($row = $result_reservations->fetch_assoc()) {
+    $labels[] = date('M', strtotime($row['jour']));
+    $data_reservations[] = $row['reservations'];
+}
+?>
+
+const data2 = {
+    labels: <?php echo json_encode($labels); ?>,
+    datasets: [{
+        label: 'Nombre de réservations mensuelles',
+        data: <?php echo json_encode($data_reservations); ?>,
+        backgroundColor: 'rgba(54, 162, 235, 0.2)',
+        borderColor: 'rgba(54, 162, 235, 1)',
+        borderWidth: 1
+    }]
+};
         const options = {
             scales: {
                 yAxes: [{
@@ -360,83 +396,152 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['action']) && isset($_P
             options: options
         });
 
-        // Graphique 3 : Répartition des revenus par type de chambre
-        const graphique3 = document.getElementById('graphique-3').getContext('2d');
-        const data3 = {
-            labels: ['Chambre Standard', 'Chambre Deluxe', 'Suite Junior', 'Suite Exécutive'],
-            datasets: [{
-                data: [30, 25, 20, 25],
-                backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0'],
-            }]
-        };
-        new Chart(graphique3, {
-            type: 'pie',
-            data: data3,
-            options: {
-                responsive: true,
-                plugins: {
-                    legend: {
-                        position: 'top',
-                    },
-                    title: {
-                        display: true,
-                        text: 'Répartition des revenus par type de chambre'
-                    }
-                }
-            }
-        });
+            // Graphique 3 : Répartition des transactions financières
+            const graphique3 = document.getElementById('graphique-3').getContext('2d');
 
-        // Graphique 4 : Occupation des chambres par catégorie sur les derniers mois
-        const graphique4 = document.getElementById('graphique-4').getContext('2d');
-        const data4 = {
-            labels: ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin'],
-            datasets: [
-                {
-                    label: 'Chambre Standard',
-                    data: [65, 70, 80, 75, 85, 90],
-                    backgroundColor: 'rgba(255, 99, 132, 0.5)',
-                },
-                {
-                    label: 'Chambre Deluxe',
-                    data: [55, 60, 65, 70, 75, 80],
-                    backgroundColor: 'rgba(54, 162, 235, 0.5)',
-                },
-                {
-                    label: 'Suite Junior',
-                    data: [40, 45, 50, 55, 60, 65],
-                    backgroundColor: 'rgba(255, 206, 86, 0.5)',
-                },
-                {
-                    label: 'Suite Exécutive',
-                    data: [30, 35, 40, 45, 50, 55],
-                    backgroundColor: 'rgba(75, 192, 192, 0.5)',
-                }
-            ]
-        };
-        new Chart(graphique4, {
-            type: 'bar',
-            data: data4,
-            options: {
-                responsive: true,
-                scales: {
-                    x: {
-                        stacked: true,
-                    },
-                    y: {
-                        stacked: true
-                    }
-                },
-                plugins: {
-                    legend: {
-                        position: 'top',
-                    },
-                    title: {
-                        display: true,
-                        text: 'Occupation des chambres par catégorie'
-                    }
-                }
+// Récupération des données depuis la base de données
+<?php
+$sql_totaux = "SELECT 
+    (SELECT SUM(amount) FROM transactions_bancaires WHERE etat = 'approved') as total_banque,
+    (SELECT SUM(montant) FROM transactions_caisse WHERE etat = 'approved') as total_caisse,
+    (SELECT SUM(amount) FROM depenses WHERE etat = 'approved') as total_depenses";
+$result_totaux = $conn->query($sql_totaux);
+$row_totaux = $result_totaux->fetch_assoc();
+
+$total_banque = $row_totaux['total_banque'] ?? 0;
+$total_caisse = $row_totaux['total_caisse'] ?? 0;
+$total_depenses = $row_totaux['total_depenses'] ?? 0;
+?>
+
+const data3 = {
+    labels: ['Transactions bancaires', 'Transactions de caisse', 'Dépenses'],
+    datasets: [{
+        data: [<?php echo $total_banque; ?>, <?php echo $total_caisse; ?>, <?php echo $total_depenses; ?>],
+        backgroundColor: ['#36A2EB', '#FFCE56', '#FF6384'],
+    }]
+};
+
+new Chart(graphique3, {
+    type: 'pie',
+    data: data3,
+    options: {
+        responsive: true,
+        plugins: {
+            legend: {
+                position: 'top',
+            },
+            title: {
+                display: true,
+                text: 'Répartition des transactions financières'
             }
-        });
+        }
+    }
+});
+
+// Graphique 4 : Mouvements financiers sur les 30 derniers jours
+const graphique4 = document.getElementById('graphique-4').getContext('2d');
+
+<?php
+// Récupération des données pour les 30 derniers jours
+$sql_mouvements = "
+    SELECT 
+        DATE(date) as jour,
+        SUM(CASE WHEN type = 'sortie' THEN montant ELSE 0 END) as sorties_caisse,
+        SUM(CASE WHEN type = 'entree' THEN montant ELSE 0 END) as entrees_rapports,
+        0 as mouvements_banque
+    FROM transactions_caisse
+    WHERE date >= DATE_SUB(CURDATE(), INTERVAL 30 DAY)
+    GROUP BY DATE(date)
+    
+    UNION ALL
+    
+    SELECT 
+        DATE(date) as jour,
+        0 as sorties_caisse,
+        0 as entrees_rapports,
+        SUM(amount) as mouvements_banque
+    FROM transactions_bancaires
+    WHERE date >= DATE_SUB(CURDATE(), INTERVAL 30 DAY)
+    GROUP BY DATE(date)
+    
+    ORDER BY jour ASC
+";
+
+$result_mouvements = $conn->query($sql_mouvements);
+
+$labels = [];
+$sorties_caisse = [];
+$entrees_rapports = [];
+$mouvements_banque = [];
+
+$data_by_day = [];
+for ($i = 29; $i >= 0; $i--) {
+    $day = date('Y-m-d', strtotime("-$i days"));
+    $data_by_day[$day] = ['sorties_caisse' => 0, 'entrees_rapports' => 0, 'mouvements_banque' => 0];
+}
+
+while ($row = $result_mouvements->fetch_assoc()) {
+    $jour = $row['jour'];
+    if (isset($data_by_day[$jour])) {
+        $data_by_day[$jour]['sorties_caisse'] += $row['sorties_caisse'];
+        $data_by_day[$jour]['entrees_rapports'] += $row['entrees_rapports'];
+        $data_by_day[$jour]['mouvements_banque'] += $row['mouvements_banque'];
+    }
+}
+
+foreach ($data_by_day as $day => $data) {
+    $labels[] = date('d M', strtotime($day));
+    $sorties_caisse[] = $data['sorties_caisse'];
+    $entrees_rapports[] = $data['entrees_rapports'];
+    $mouvements_banque[] = $data['mouvements_banque'];
+}
+?>
+
+const data4 = {
+    labels: <?php echo json_encode($labels); ?>,
+    datasets: [
+        {
+            label: 'Sorties caisse',
+            data: <?php echo json_encode($sorties_caisse); ?>,
+            backgroundColor: 'rgba(255, 99, 132, 0.5)',
+        },
+        {
+            label: 'Entrées (rapports agents)',
+            data: <?php echo json_encode($entrees_rapports); ?>,
+            backgroundColor: 'rgba(54, 162, 235, 0.5)',
+        },
+        {
+            label: 'Mouvements bancaires',
+            data: <?php echo json_encode($mouvements_banque); ?>,
+            backgroundColor: 'rgba(75, 192, 192, 0.5)',
+        }
+    ]
+};
+
+new Chart(graphique4, {
+    type: 'bar',
+    data: data4,
+    options: {
+        responsive: true,
+        scales: {
+            x: {
+                stacked: true,
+            },
+            y: {
+                stacked: true
+            }
+        },
+        plugins: {
+            legend: {
+                position: 'top',
+            },
+            title: {
+                display: true,
+                text: 'Mouvements financiers sur les 30 derniers jours'
+            }
+        }
+    }
+});
     </script>
 </body>
 </html>
