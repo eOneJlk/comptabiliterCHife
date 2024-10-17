@@ -1,11 +1,5 @@
 <?php
 require_once '../../dbconnexion.php';
-$roles_autorises = ['admin','stock'];
-if (!isset($_SESSION['role']) || !in_array($_SESSION['role'], $roles_autorises)) {
-    // Rediriger vers une page d'erreur ou la page d'accueil si l'utilisateur n'a pas le bon rôle
-    header("Location: ../../acces_refuse.php");
-    exit();
-}
 if (isset($_GET['date_debut']) && isset($_GET['date_fin'])) {
     $date_debut = $_GET['date_debut'];
     $date_fin = $_GET['date_fin'];

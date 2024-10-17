@@ -25,9 +25,14 @@ class PDF extends FPDF
 {
     function Header()
     {
-        $this->SetFont('Arial','B',15);
-        $this->Cell(0,10,'Rapport Détaillé',0,1,'C');
-        $this->Ln(10);
+        // Logo
+        $this->Image('../../assets/img/logo_2.png', 0, 0, 210);
+        // Police Arial gras 24
+        $this->SetFont('Arial','B',24);
+        // Titre
+        $this->Cell(0,40,utf8_decode('Rapport Détaillé'),0,1,'C');
+        // Saut de ligne
+        $this->Ln(20);
     }
     
     function Footer()

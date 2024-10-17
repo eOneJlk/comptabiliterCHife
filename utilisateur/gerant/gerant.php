@@ -60,7 +60,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['action']) && isset($_P
         <nav>
             <a class="logo" href="#home"><img src="assets/img/logo_2.png" alt="Logo" style="width: 100px; height: 100px; border-radius: 20px; margin: 10px;"></a>
               <ul class="nav-links" style="display: flex; justify-content: space-between; align-items: center; padding: 0; margin: 0;">
-                <li style="list-style-type: none; margin: 10px;"><a href="index.php" style="text-decoration: none; color: #333; font-weight: bold;">Dashboard</a></li>
+                <li style="list-style-type: none; margin: 10px;"><a href="./../../index.php" style="text-decoration: none; color: #333; font-weight: bold;">Dashboard</a></li>
                 <li style="list-style-type: none; margin: 10px;"><a href="personnel.php" style="text-decoration: none; color: #333; font-weight: bold;">Gestion du Personnel</a></li>
                 <li style="list-style-type: none; margin: 10px;"><a href="#dashboard-section" style="text-decoration: none; color: #333; font-weight: bold;">Graphiques</a></li>
               </ul>
