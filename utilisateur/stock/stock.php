@@ -56,7 +56,11 @@ if (!isset($_SESSION['role']) || !in_array($_SESSION['role'], $roles_autorises))
       <a class="logo" href="#home"><img src="assets/img/logo_2.png" alt="Logo" style="width: 100px; height: 100px; border-radius: 20px; margin: 10px;"></a>
         <ul class="nav-links" style="display: flex; justify-content: space-between; align-items: center; padding: 0; margin: 0;">
           <li style="list-style-type: none; margin: 10px;"><a href="#home" style="text-decoration: none; color: #333; font-weight: bold;">Accueil</a></li>
-          <li style="list-style-type: none; margin: 10px;"><a href="#dashboard.html" style="text-decoration: none; color: #333; font-weight: bold;">Dashboard</a></li>
+          <div class="user-profile">
+                <img src="assets/img/logo_2.png" alt="User Avatar">
+                <span><a href="./../../profil.php"><?php echo isset($nom_complet) ? htmlspecialchars($nom_complet) : 'Utilisateur'; ?></a></span>
+                <a href="./../../logout.php" class="logout-link">Déconnexion</a>
+            </div>
           <li style="list-style-type: none; margin: 10px;"><a href="#table_de_stock" style="text-decoration: none; color: #333; font-weight: bold;">Produits en stock</a></li>
         </ul>
   </nav>

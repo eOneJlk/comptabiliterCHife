@@ -86,6 +86,11 @@ if (!isset($_SESSION['role']) || !in_array($_SESSION['role'], $roles_autorises))
                 <li style="list-style-type: none; margin: 10px;">
                     <a href="fiche_des_paye.html" style="text-decoration: none; color: #333; font-weight: bold;">Fiche des Payes</a>
                 </li>
+                <div class="user-profile">
+                <img src="assets/img/logo_2.png" alt="User Avatar">
+                <span><a href="./../../profil.php"><?php echo isset($nom_complet) ? htmlspecialchars($nom_complet) : 'Utilisateur'; ?></a></span>
+                <a href="./../../logout.php" class="logout-link">Déconnexion</a>
+            </div>
             </ul>
         </nav>
     </header>
@@ -105,6 +110,9 @@ if (!isset($_SESSION['role']) || !in_array($_SESSION['role'], $roles_autorises))
 
         <label for="email">Email:</label>
         <input type="email" id="email" name="email" required><br>
+
+        <label for="mot_de_passe">Mot de passe:</label>
+        <input type="password" id="mot_de_passe" name="mot_de_passe" required><br>
 
         <label for="telephone">Téléphone:</label>
         <input type="tel" id="telephone" name="telephone" required><br>

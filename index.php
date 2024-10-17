@@ -44,7 +44,7 @@ $nom_complet = $agent['nom'] . ' ' . $agent['prenom'];
             </div>
             <div class="user-profile">
                 <img src="assets/img/logo_2.png" alt="User Avatar">
-                <span><?php echo htmlspecialchars($nom_complet); ?></span>
+                <span><a href="profil.php"><?php echo htmlspecialchars($nom_complet); ?></a></span>
                 <a href="logout.php" class="logout-link">Déconnexion</a>
             </div>
         </nav>

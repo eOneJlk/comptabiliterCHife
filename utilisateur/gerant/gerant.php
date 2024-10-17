@@ -63,6 +63,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['action']) && isset($_P
                 <li style="list-style-type: none; margin: 10px;"><a href="./../../index.php" style="text-decoration: none; color: #333; font-weight: bold;">Dashboard</a></li>
                 <li style="list-style-type: none; margin: 10px;"><a href="personnel.php" style="text-decoration: none; color: #333; font-weight: bold;">Gestion du Personnel</a></li>
                 <li style="list-style-type: none; margin: 10px;"><a href="#dashboard-section" style="text-decoration: none; color: #333; font-weight: bold;">Graphiques</a></li>
+                <div class="user-profile">
+                <img src="assets/img/logo_2.png" alt="User Avatar">
+                <span><a href="./../../profil.php"><?php echo isset($nom_complet) ? htmlspecialchars($nom_complet) : 'Utilisateur'; ?></a></span>
+                <a href="./../../logout.php" class="logout-link">Déconnexion</a>
+            </div>
               </ul>
         </nav>
     </header>
