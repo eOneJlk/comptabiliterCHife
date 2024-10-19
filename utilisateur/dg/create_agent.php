@@ -30,10 +30,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $departement = htmlspecialchars($conn->real_escape_string($_POST['departement']));
     $role = htmlspecialchars($conn->real_escape_string($_POST['role']));
     $date_embauche = htmlspecialchars($conn->real_escape_string($_POST['date_embauche']));
-    $mot_de_passe = htmlspecialchars($conn->real_escape_string($_POST['mot_de_passe']));
+    
+    // Définir un mot de passe par défaut (ex. 'agent1234')
+    $mot_de_passe_par_defaut = 'agent1234';
 
-    // Hashage du mot de passe fourni par l'utilisateur
-    $mot_de_passe_hash = password_hash($mot_de_passe, PASSWORD_BCRYPT);
+    // Hashage du mot de passe avec l'algorithme bcrypt pour plus de sécurité
+    $mot_de_passe_hash = password_hash($mot_de_passe_par_defaut, PASSWORD_BCRYPT);
 
     // Requête SQL pour insérer un nouvel agent dans la base de données
     $sql = "INSERT INTO agents (nom, prenom, email, telephone, adresse, departement, role, date_embauche, mot_de_passe)
@@ -47,7 +49,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         // Exécuter la requête
         if ($stmt->execute()) {
             echo "Agent créé avec succès!";
-            header('Location: gerant.php');
+            header('Location: gerant.html');
             exit();
         } else {
             echo "Erreur lors de la création de l'agent : " . $conn->error;

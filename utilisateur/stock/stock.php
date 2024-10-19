@@ -48,6 +48,7 @@ if (!isset($_SESSION['role']) || !in_array($_SESSION['role'], $roles_autorises))
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Caissier</title>
     <link rel="stylesheet" href="assets/css/style_utilisateur.css">
+    <link rel="stylesheet" href="assets/css/style_stock.css">
 </head>
 <body>
     <header></header>
@@ -55,57 +56,15 @@ if (!isset($_SESSION['role']) || !in_array($_SESSION['role'], $roles_autorises))
       <a class="logo" href="#home"><img src="assets/img/logo_2.png" alt="Logo" style="width: 100px; height: 100px; border-radius: 20px; margin: 10px;"></a>
         <ul class="nav-links" style="display: flex; justify-content: space-between; align-items: center; padding: 0; margin: 0;">
           <li style="list-style-type: none; margin: 10px;"><a href="#home" style="text-decoration: none; color: #333; font-weight: bold;">Accueil</a></li>
-          <li style="list-style-type: none; margin: 10px;"><a href="#dashboard.html" style="text-decoration: none; color: #333; font-weight: bold;">Dashboard</a></li>
+          <div class="user-profile">
+                <img src="assets/img/logo_2.png" alt="User Avatar">
+                <span><a href="./../../profil.php"><?php echo isset($nom_complet) ? htmlspecialchars($nom_complet) : 'Utilisateur'; ?></a></span>
+                <a href="./../../logout.php" class="logout-link">Déconnexion</a>
+            </div>
           <li style="list-style-type: none; margin: 10px;"><a href="#table_de_stock" style="text-decoration: none; color: #333; font-weight: bold;">Produits en stock</a></li>
         </ul>
   </nav>
     </header>
-    <style>
-        /* Style pour les modales */
-        .modal {
-            display: none;
-            position: fixed;
-            z-index: 1;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.5);
-        }
-
-        .modal-content {
-            background-color: #fefefe;
-            margin: 15% auto;
-            padding: 20px;
-            border: 1px solid #888;
-            width: 80%;
-            max-width: 500px;
-            border-radius: 10px;
-        }
-
-        .close {
-            color: #aaa;
-            float: right;
-            font-size: 28px;
-            font-weight: bold;
-        }
-
-        .close:hover,
-        .close:focus {
-            color: black;
-            text-decoration: none;
-            cursor: pointer;
-        }
-
-        button {
-            padding: 10px 20px;
-            margin: 10px 0;
-            background-color: #4CAF50;
-            color: white;
-            border: none;
-            cursor: pointer;
-        }
-    </style>
 </head>
 <body>
 
@@ -135,9 +94,11 @@ if (!isset($_SESSION['role']) || !in_array($_SESSION['role'], $roles_autorises))
 <h1 style="text-align: center;">Formulaire de Stock</h1>
 
 <!-- Boutons pour afficher les formulaires -->
-<button id="openReportForm">Ouvrir Formulaire de Rapport</button>
-<button id="openProductForm">Ouvrir Formulaire d'Enregistrement de Produit</button>
-<button id="openRemoveProductForm">Ouvrir Formulaire de Retrait de Produit</button>
+<div class="button-container" style="display: flex; justify-content: center; gap: 10px; margin-bottom: 20px;">
+    <button id="openReportForm" style="padding: 10px 20px; background-color: #4CAF50; color: white; border: none; border-radius: 5px; cursor: pointer;">Ouvrir Formulaire de Rapport</button>
+    <button id="openProductForm" style="padding: 10px 20px; background-color: #008CBA; color: white; border: none; border-radius: 5px; cursor: pointer;">Ouvrir Formulaire d'Enregistrement de Produit</button>
+    <button id="openRemoveProductForm" style="padding: 10px 20px; background-color: #f44336; color: white; border: none; border-radius: 5px; cursor: pointer;">Ouvrir Formulaire de Retrait de Produit</button>
+</div>
 
 <!-- Modale du formulaire de rapport -->
 <div id="reportModal" class="modal">

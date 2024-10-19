@@ -1,5 +1,10 @@
 <?php
 session_start();
+include 'dbconnexion.php';
+if (!isset($_SESSION['agent_id'])) {
+    header("Location: login.php");
+    exit();
+}
 ?>
 <!DOCTYPE html>
 <html lang="fr">

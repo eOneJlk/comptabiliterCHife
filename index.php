@@ -40,11 +40,11 @@ $nom_complet = $agent['nom'] . ' ' . $agent['prenom'];
                 <a href="utilisateur/comptabilite/comptabilite.html" class="nav-link" style="background-color: hwb(0 80% 20%); color: white; padding: 10px 20px; border: none; border-radius: 4px; cursor: pointer;">Comptabilite</a>
                 <a href="utilisateur/stock/stock.php" class="nav-link" style="background-color: hwb(0 80% 20%); color: white; padding: 10px 20px; border: none; border-radius: 4px; cursor: pointer;">Stok</a>
                 <a href="utilisateur/caisse/caisse.php" class="nav-link" style="background-color: hwb(0 80% 20%); color: white; padding: 10px 20px; border: none; border-radius: 4px; cursor: pointer;">Caisse</a>
-                <a href="utilisateur/agant/agant.html" class="nav-link" style="background-color: hwb(0 80% 20%); color: white; padding: 10px 20px; border: none; border-radius: 4px; cursor: pointer;">Agant</a>
+                <a href="utilisateur/agent/agent.php" class="nav-link" style="background-color: hwb(0 80% 20%); color: white; padding: 10px 20px; border: none; border-radius: 4px; cursor: pointer;">Agant</a>
             </div>
             <div class="user-profile">
                 <img src="assets/img/logo_2.png" alt="User Avatar">
-                <span><?php echo htmlspecialchars($nom_complet); ?></span>
+                <span><a href="profil.php"><?php echo htmlspecialchars($nom_complet); ?></a></span>
                 <a href="logout.php" class="logout-link">Déconnexion</a>
             </div>
         </nav>
