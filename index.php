@@ -51,35 +51,39 @@ $nom_complet = $agent['nom'] . ' ' . $agent['prenom'];
     </header>
 
     <main>
-        <section id="overview">
-            <h2>Etat des comptes</h2>
-            <div class="card-container">
-                <div class="card">
-                    <i class="fas fa-users"></i>
-                    <h3>Customers</h3>
-                    <p>45,254</p>
-                    <span class="trend negative">-1.04%</span>
-                </div>
-                <div class="card">
-                    <i class="fas fa-chart-line"></i>
-                    <h3>Revenue</h3>
-                    <p>$25,456</p>
-                    <span class="trend positive">+2.65%</span>
-                </div>
-                <div class="card">
-                    <i class="fas fa-shopping-cart"></i>
-                    <h3>Depense</h3>
-                    <p>5,643</p>
-                    <span class="trend negative">-0.82%</span>
-                </div>
-                <div class="card">
-                    <i class="fas fa-chart-line"></i>
-                    <h3>Benefices</h3>
-                    <p>45,254</p>
-                    <span class="trend negative">-1.04%</span>
-                </div>
+        <section id="table-des-agents">
+            <h2>Table des agents créés par le gérant</h2>
+            <div class="chart-container">
+                <table class="table-agents">
+                    <tr>
+                        <th>Nom</th>
+                        <th>Prénom</th>
+                        <th>Email</th>
+                        <th>Téléphone</th>
+                        <th>Role</th>
+                    </tr>
+                <?php
+                $sql_agents = "SELECT nom, prenom, email, telephone, role FROM agents";
+                $result_agents = $conn->query($sql_agents);
+
+                if ($result_agents->num_rows > 0) {
+                    while($row = $result_agents->fetch_assoc()) {
+                        echo "<tr>";
+                        echo "<td>" . htmlspecialchars($row['nom']) . "</td>";
+                        echo "<td>" . htmlspecialchars($row['prenom']) . "</td>";
+                        echo "<td>" . htmlspecialchars($row['email']) . "</td>";
+                        echo "<td>" . htmlspecialchars($row['telephone']) . "</td>";
+                        echo "<td>" . htmlspecialchars($row['role']) . "</td>";
+                        echo "</tr>";
+                    }
+                } else {
+                    echo "<tr><td colspan='5' style='text-align: center;'>Aucun agent trouvé.</td></tr>";
+                }
+                ?>
+                </table>
             </div>
         </section>
+        
 
         <section id="table-des-données">
             <h2>Tables des données </h2>
