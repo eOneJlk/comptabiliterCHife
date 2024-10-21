@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fiche des Agant</title>
+    <link rel="stylesheet" href="assets/css/style_utilisateur.css">
+    <link rel="stylesheet" href="assets/css/style_gerant.css">
+</head>
+<body>
+    <header>
+        <nav>
+            <a class="logo" href="#home"><img src="assets/img/logo_2.png" alt="Logo" style="width: 100px; height: 100px; border-radius: 20px; margin: 10px;"></a>
+              <ul class="nav-links" style="display: flex; justify-content: space-between; align-items: center; padding: 0; margin: 0;">
+                <li style="list-style-type: none; margin: 10px;"><a href="gerant.php" style="text-decoration: none; color: #333; font-weight: bold;">Dashboard</a></li>
+                <li style="list-style-type: none; margin: 10px;"><a href="personnel.php" style="text-decoration: none; color: #333; font-weight: bold;">Personnel</a></li>
+                <div class="user-profile">
+                <img src="assets/img/logo_2.png" alt="User Avatar">
+                <span><a href="./../../profil.php"><?php echo isset($nom_complet) ? htmlspecialchars($nom_complet) : 'Utilisateur'; ?></a></span>
+                <a href="./../../logout.php" class="logout-link">Déconnexion</a>
+            </div>
+              </ul>
+        </nav>
+    </header>
+    <main>
+        <h1>Fromuulaire de Congee des agants</h1>
+    <form action="traitement_congee.php" method="post">
+        <div class="form-group">
+            <label for="nom_agent">Nom de l'agent:</label>
+            <input type="text" id="nom_agent" name="nom_agent" required>
+        </div>
+        <div class="form-group">
+            <label for="prenom_agent">Prénom de l'agent:</label>
+            <input type="text" id="prenom_agent" name="prenom_agent" required>
+        </div>
+        <div class="form-group"></div>
+            <label for="prenom_agent">Poste de l'agant</label>
+            <input type="text" id="prenom_agent" name="prenom_agent" required>
+        </div>
+        <div class="form-group">
+            <label for="date_debut">Date de début du congé:</label>
+            <input type="date" id="date_debut" name="date_debut" required>
+        </div>
+        <div class="form-group">
+            <label for="date_fin">Date de fin du congé:</label>
+            <input type="date" id="date_fin" name="date_fin" required>
+        </div>
+        <div class="form-group">
+            <label for="motif_congee">Motif du congé:</label>
+            <textarea id="motif_congee" name="motif_congee" required></textarea>
+        </div>
+        <button type="submit">Soumettre</button>
+    </form>
+
+    <table style="width: 100%; border-collapse: collapse; margin-top: 20px;">
+        <thead>
+            <tr>
+                <th style="border: 1px solid #ddd; padding: 8px;">Nom de l'agent</th>
+                <th style="border: 1px solid #ddd; padding: 8px;">Prénom de l'agent</th>
+                <th style="border: 1px solid #ddd; padding: 8px;">Poste de l'agant</th>
+                <th style="border: 1px solid #ddd; padding: 8px;">Date de début du congé</th>
+                <th style="border: 1px solid #ddd; padding: 8px;">Date de fin du congé</th>
+                <th style="border: 1px solid #ddd; padding: 8px;">Motif du congé</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- Les données seront ajoutées ici par JavaScript ou PHP -->
+        </tbody>
+    </table>
+    
+    </main>
+
+    <footer>
+      <div class="footer-content">
+          <style>
+              .footer-content {
+                  background-color: #e7e5e5;
+                  padding: 10px 0;
+                  text-align: center;
+                  color: #000000;
+              }
+              .footer-content .logo {
+                  width: 100px;
+                  height: auto;
+                  margin-bottom: 20px;
+              }
+              .footer-content p {
+                  margin-bottom: 20px;
+              }
+              .footer-content .social-links {
+                  display: flex;
+                  justify-content: center;
+                  align-items: center;
+              }
+              .footer-content .social-links a {
+                  margin: 0 10px;
+                  color: #333;
+                  transition: color 0.3s ease;
+              }
+              .footer-content .social-links a:hover {
+                  color: #57a3f3;
+              }
+          </style>
+          <img src="assets/img/logo_2.png" alt="Company Logo" class="logo">
+          <p>&copy; 2024 Chife Hotel. All rights reserved.</p>
+          <div class="social-links">
+              <a href="https://www.facebook.com/" target="_blank"><i class="fab fa-facebook-f"></i></a>
+              <a href="https://www.twitter.com/" target="_blank"><i class="fab fa-twitter"></i></a>
+              <a href="https://www.instagram.com/" target="_blank"><i class="fab fa-instagram"></i></a>
+              <a href="https://www.linkedin.com/" target="_blank"><i class="fab fa-linkedin-in"></i></a>
+          </div>
+      </div>
+  </footer>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    
+</body>
+</html>
