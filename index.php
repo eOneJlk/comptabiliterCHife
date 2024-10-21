@@ -52,7 +52,7 @@ $nom_complet = $agent['nom'] . ' ' . $agent['prenom'];
 
     <main>
         <section id="table-des-agents">
-            <h2>Table des agents créés par le gérant</h2>
+            <h2>Table des agents</h2>
             <div class="chart-container">
                 <table class="table-agents">
                     <tr>

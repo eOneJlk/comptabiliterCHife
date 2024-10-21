@@ -81,6 +81,34 @@
                 
                 <button type="submit">Soumettre le rapport journalier</button>
             </form>
+       
+        <button onclick="showStockRequestForm()">Soumettre une demande de produit au stock</button>
+        <div id="stockRequestFormContainer" style="display: none;">
+            <form action="submit_stock_request.php" method="post" id="stockRequestForm">
+                <h2>Formulaire de Demande de Produit au Stock</h2>
+                
+                <label for="produit">Produit:</label>
+                <input type="text" id="produit" name="produit" required><br>
+
+                <label for="quantite">Quantité:</label>
+                <input type="number" id="quantite" name="quantite" required><br>
+
+                <label for="raison">Raison de la demande:</label>
+                <textarea id="raison" name="raison" rows="4" cols="50" required></textarea><br>
+
+                <button type="submit">Soumettre la demande de produit</button>
+            </form>
+        </div>
+        <script>
+            function showStockRequestForm() {
+                var formContainer = document.getElementById("stockRequestFormContainer");
+                if (formContainer.style.display === "none") {
+                    formContainer.style.display = "block";
+                } else {
+                    formContainer.style.display = "none";
+                }
+            }
+        </script>
         <?php
         }
         ?>

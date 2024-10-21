@@ -174,7 +174,7 @@ $reste_total = $entrees_totales - $sorties_totales;
             <div class="modal-content">
                 <span class="close" id="closeDepenseModal">&times;</span>
                 <form action="submit_expense.php" method="POST">
-                    <h2>Ajouter une Dépense</h2>
+                    <h2>Ajouter une Dépense Journaliere</h2>
                     <label for="date">Date:</label>
                     <input type="date" id="date" name="date" required><br><br>
 
