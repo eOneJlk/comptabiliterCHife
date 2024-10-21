@@ -199,27 +199,30 @@ if (!isset($_SESSION['role']) || !in_array($_SESSION['role'], $roles_autorises))
     </table>
 
     <!-- Formulaire de Paiement de l'Agent -->
-    <form action="submit_agent_payment.php" method="post">
-        <h2>Paiement de l'Agent</h2>
-        <label for="date">Date:</label>
-        <input type="date" id="date" name="date" required><br>
+    <button onclick="document.getElementById('agent_payment_form').style.display='block'; document.getElementById('agent_payment_form').style.position='fixed'; document.getElementById('agent_payment_form').style.top='50%'; document.getElementById('agent_payment_form').style.left='50%'; document.getElementById('agent_payment_form').style.transform='translate(-50%, -50%)';">Afficher le formulaire de paiement</button>
+    <div id="agent_payment_form" style="display: none;">
+        <form action="submit_agent_payment.php" method="post">
+            <h2>Paiement de l'Agent</h2>
+            <label for="date">Date:</label>
+            <input type="date" id="date" name="date" required><br>
 
-        <label for="agent_name">Nom de l'agent:</label>
-        <input type="text" id="agent_name" name="agent_name" required autocomplete="off"><br>
+            <label for="agent_name">Nom de l'agent:</label>
+            <input type="text" id="agent_name" name="agent_name" required autocomplete="off"><br>
 
-        <ul id="agent_list" style="list-style-type: none; padding: 0; margin: 0;"></ul>
+            <ul id="agent_list" style="list-style-type: none; padding: 0; margin: 0;"></ul>
 
-        <label for="category">Catégorie:</label>
-        <select id="category" name="category" required>
-            <option value="avance">Avance</option>
-            <option value="payment">Paiement</option>
-        </select><br>
+            <label for="category">Catégorie:</label>
+            <select id="category" name="category" required>
+                <option value="avance">Avance</option>
+                <option value="payment">Paiement</option>
+            </select><br>
 
-        <label for="amount">Montant:</label>
-        <input type="number" id="amount" name="amount" step="0.01" required><br>
+            <label for="amount">Montant:</label>
+            <input type="number" id="amount" name="amount" step="0.01" required><br>
 
-        <button type="submit">Enregistrer le paiement</button>
-    </form>
+            <button type="submit" onclick="document.getElementById('agent_payment_form').style.display='none';">Enregistrer le paiement</button>
+        </form>
+    </div>
 
     <!-- Liste des Paiements -->
     <div style="background-color: #f0f0f0; text-align: center;">
